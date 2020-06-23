@@ -1,0 +1,59 @@
+
+
+
+
+h3{
+	font-size:1.5em;
+	background-color:#f0f0f0;
+	color:#9ec219;
+	padding-left:40px;
+	padding-top:3px;
+	padding-bottom:3px;	
+}
+
+
+a{color:#6c8f00;}
+a:visited{color:#b41780;}
+
+
+
+#title{
+	position:absolute;
+	top:10px;
+	left:225px;
+	margin:0;
+	padding:0;
+	text-align:center;
+	font-size:6em;
+	color:#9ec219;
+}
+
+
+
+
+
+
+
+#menu li#curr{
+	background-color:#9ec219;
+}
+
+
+#menu a:visited{
+	color:#9ec219;
+}
+
+
+
+
+
+#menugauche #coordonnnees{
+display:block;
+width:205px;
+background-color:#f0f0f0;
+font-size:0.9em;
+}
+
+
+.title a{text-decoration:none;color:#b41780;}
+.authors{display:block;padding-left:20px;color:#9ec219;}
