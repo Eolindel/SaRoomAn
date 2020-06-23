@@ -1,2 +1,8 @@
 # pas de fichier de backup bluefish
 *~
+
+includes/db_connect.php
+backup/
+PULSALYS/
+.directory
+includes/jquery-ui-1.12.1/
