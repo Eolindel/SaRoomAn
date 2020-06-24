@@ -415,7 +415,14 @@ var addSlotToTableRoom=function(data,removable = false,refTable){
 	if(editIcon(data)){
 		line+='<img src="images/icones/edit.png" alt="edit">';
 	}
-	line+='</a></td><td>'+weekDays[data.day]+'</td><td class="'+startType+'">'+minToHours(data.start)+'</td><td class="'+endType+'">'+minToHours(data.end)+'</td><td>'+minToHours(data.length)+'</td><td><a href="schedule_user.php?id_user='+data.id_user+'">'+data.prenom+' '+data.nom+'</a></td><td>'+data.commentaire+'</td><td>'+data.valid+'</td><td>';//&amp;date='+data.date+'
+	line+='</a></td><td>'+weekDays[data.day]+'</td><td class="'+startType+'">'+minToHours(data.start)+'</td><td class="'+endType+'">'+minToHours(data.end)+'</td><td>'+minToHours(data.length)+'</td>'
+	if(data.id_user !==undefined){
+		line+='<td><a href="schedule_user.php?id_user='+data.id_user+'">'+data.prenom+' '+data.nom+'</a></td>';
+	}else{
+		line+='<td><a href="schedule_user.php?id_user='+data.ref_user+'">'+data.prenom+' '+data.nom+'</a></td>';	
+	}
+	
+	line+='<td>'+data.commentaire+'</td><td>'+data.valid+'</td><td>';//&amp;date='+data.date+'
 	if(deleteIcon(data)){
 		line+='<a href="slot_delete.php?id_slot='+data.id_slot+'"><img src="images/icones/delete.png" alt="delete this slot"></a>';
 	}

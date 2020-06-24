@@ -19,7 +19,7 @@ $('input[name="date"]').on("change",function(){
 }) 
 
 
-
+//display teh occupation of the room.
 var showDataRow = function() {
 			var day= FormatToDate('dd-mm-yy', $('input[name="date"]').val()).getDay();
       	var room={'idSvg':$('#room').attr('data-room'),'id_room':$('#room').attr('data-id_room'),'officeName':$('#room').attr('data-officeName'),'places':$('#room').attr('data-places'),'max':$('#room').attr('data-max')};
