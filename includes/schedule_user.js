@@ -17,60 +17,9 @@ var displayZone = weekSchedule.append('g')
 var scheduleZone = displayZone.append('g')
 		.attr('transform', 'translate('+dayDims.width+',0)');
 
-	
+addBars(dayDims,scheduleZone,sliderHour);	
 		
-//Adding vertical bars as label
-for(var j=sliderHour.min;j<=sliderHour.max;j+=15){
-	
-	if(j%60===0){
-	scheduleZone.append('text')
-		.attr("font-size","0.8em")
-		.attr("x",(j-sliderHour.min))
-		.attr("y",'-5px')
-		.attr("text-anchor", "middle")
-		.text(minToHoursOnly(j));	
-	scheduleZone.append('path')
-		.attr('d','M'+(j-sliderHour.min)+' 0 V '+(6*dayDims.height))
-		.attr('stroke','#b3b3b3')
-		.attr('stroke-width','2px');		
-	}else{
-	scheduleZone.append('path')
-		.attr('d','M'+(j-sliderHour.min)+' 0 V '+(6*dayDims.height))
-		.attr('stroke','#b3b3b3');	
-	}
-}	
-		
-//adding each day and make them clickable
-for (var j=1;j<7;j++) {
-	var day=displayZone.append('g')
-		.attr("data-day",j)
-		.attr("class","weekDay")
-		.attr('transform', 'translate(0,'+((j-1)*45)+')')
-		.on('click', function() {
-			var indixDay=d3.select(this).attr('data-day');
-			d3.selectAll('input[name="day"]:checked').property('checked', false);
-      	d3.select('[id="day'+indixDay+'"]').property('checked', true);
-      	//$('input[name="day"]').trigger("change");
-      	updateEnd();
-       });
-	day.append('rect')
-		.attr('width',dayDims.width+'px')
-		.attr('height',dayDims.height+'px')
-		.attr('fill',paletteDays[j]);
-	day.append('text')
-		.attr("x",20)
-		.attr("y",'18px')
-		.classed('nameDays',true)
-		.text(weekDays[j]);
-	day.append('text')
-		.attr("x",20)
-		.attr('id','dateDay'+j)
-		.attr("y",'37px')
-		.attr("text-anchor", "left")
-		.attr("font-size","0.8em")
-		.text();	
-}
-
+addDaysRectangles(displayZone,paletteDays,weekDays);	
 
 //ROOMS
 
