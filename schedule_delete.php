@@ -11,13 +11,12 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 		$object['date']=$_POST['date'];
 		$object['date2']=$_POST['date'];
 		$object["week"]=date("W",strtotime($_POST['date']));	
-		$object["firstweek"]=$object["week"]+1;	
-		$object["endweek"]=$object["week"]+1;
+		$object["firstweek"]=$object["week"];	
+		$object["endweek"]=$object["week"];
 		$object["year"]=$inputDate[3];	
 		$object['startdate']=date('d-m-Y',strtotime($object["year"].'W'.$object["firstweek"]));		
 		$object['enddate']=date('d-m-Y',strtotime($object["year"].'W'.$object["endweek"]));		
 		$object['kindsWeek']='All';
-		
 		
 		if(isset($_POST['id_user'])){
 			$object['id_user']=intval($_POST['id_user']);
@@ -27,13 +26,12 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 			$reponse->execute(array("id_user"=>$object['id_user'])); 	
 			$user=$reponse->fetch(PDO::FETCH_ASSOC);	
 			$object=array_merge($object,$user);
+			//if both conditions are met
 			
-			
-			//if both conditions are met we proceed.			
 			$line='';
-			$line.='<h2 id="schedule" '.controlValues().'>Copy the schedule of this week for '.$object['prenom'].' '.$object['nom'].'</h2>';
+			$line.='<h2 id="schedule" '.controlValues().'>Delete the schedule of this week for '.$object['prenom'].' '.$object['nom'].'</h2>';
 		
-			$line.='<form method="post" action="schedule_copy2.php"><label for="date" class="label_court2">Week to copy : </label>&nbsp;'.input_r('date', $object, 10).'<span id="currentweek"></span><br>';	
+			$line.='<form method="post" action="schedule_copy2.php">';	
 			$line.='<label for="startdate" class="label_court2">Starting week : </label>&nbsp;'.input_r('startdate', $object, 10).'<span id="startweek"></span> <img src="images/ajax-loader.gif" id="loadingStartDate"><br>';	
 			$line.='<label for="enddate" class="label_court2">Ending week : </label>&nbsp;'.input_r('enddate', $object, 10).'<span id="endweek"></span> <img src="images/ajax-loader.gif" id="loadingEndDate"><br>';
 			$line.='<label for="kindsWeek" class="label_court2">Kinds of week : </label>&nbsp;'.radio_r('kindsWeek', 'Odd', 'Odd', $object).radio_r('kindsWeek', 'Even', 'Even', $object).radio_r('kindsWeek', 'All', 'All', $object).'<br>'.input_r('id_user', $object, 10,'hidden').input_r('week', $object, 10,'hidden').input_r('year', $object, 10,'hidden').'<div id="addedInputs"></div>';
@@ -45,15 +43,17 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 				$line.='<span id="workplace" data-idsvg="'.$user['wSvg'].'" data-id="'.$user['wId'].'" data-human="'.$user['workplace'].'"></span>';
 			}else{
 				$line.='<span id="workplace"></span>';}
-			$line.='<table id="weekList"><tr><th>Week number</th><th>First day</th><th>Last day</th><th>No slots currently</th></tr></table><input type="submit" value="Copy the schedule below for the weeks without any planned slot."></form><br>';		
-			$line.='<div id="displayWeek" data-iduser="'.$object['id_user'].'"></div>';	
+			$line.='<table id="weekList"><tr><th>Week number</th><th>First day</th><th>Last day</th><th>No slots currently</th></tr></table><input type="submit" value="Delete the schedule for the weeks with planned slots."></form><br>';		
+			//$line.='<div id="displayWeek" data-iduser="'.$object['id_user'].'"></div>';	
 			
-			echo $line;	
-		}		
+			echo $line;				
+			
+		}			
 		
 		
-	}		
-	echo '<script type="text/javascript" src="includes/functions.js"></script><script type="text/javascript" src="includes/schedule_copy.js"></script>';	
+	}	
+
+	echo '<script type="text/javascript" src="includes/functions.js"></script><script type="text/javascript" src="includes/schedule_delete.js"></script>';	
 }
 ?>
 <?php include('includes/foot.php'); ?>  

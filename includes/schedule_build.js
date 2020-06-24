@@ -1,8 +1,15 @@
 $(document).ready(function() {
 
 
-//sélecteur pour la date
 
+//Make duplicate of form for the deletion of the slots of the week
+var copyFormDelete = function(){
+	$('#date2').val($('#date').val());
+	$('#id_user2').val(parseInt($('#id_user').val(),10));
+}
+copyFormDelete();
+
+$('#date,#id_user').on("change",copyFormDelete)
 
 var updateRoomTable = function(targetTable,room){
 	if($('.roomName',targetTable).text()!==room.officeName && $('.roomName',targetTable).text()!==room.officeName ){
@@ -171,6 +178,9 @@ addSlotSchedule();
 //SLOT
 //SLOT
 
+
+
+//DELETE Schedule
 
 
 //ROOMS

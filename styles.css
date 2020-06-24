@@ -92,9 +92,10 @@ form textarea{display:inline-block;vertical-align:top;margin-left:265px;}
 
 .nobody{background-color:#fbb4ae}
 
-
+.tRow{display:table-row;}
+.tCell{display:table-cell;padding-right:5px;}
 .center{text-align:center;}
-
+.dInline{display: inline;}
 
 .small_padding{padding-left:5px;}
 .margin_extended{margin-right:75px;}
@@ -133,7 +134,7 @@ a[class="submit_2"]{display:block;margin-top:7px;margin-bottom:7px;padding-top: 
 
 #submitShort[type="submit"], .submitShort{display:inline-block;margin-left:40px;margin-top:7px;margin-bottom:7px;padding-top: 3px;padding-bottom:3px;border: none;text-align:center;margin:auto;background: #eb5569;color: #fff;font-weight: bolder;font-size: 1em;min-width:100px;width:100px;text-decoration:none;-moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;-webkit-transition-property: background-color;-webkit-transition-duration: 0.5s;-moz-transition-property: background-color;-moz-transition-duration: 0.5s;transition-property: background-color;transition-duration: 0.5s;}
 
-[type="submit"]:visited, a[class="submit"]:visited{color: #fff;}
+[type="submit"]:visited, a[class="submit"]:visited,.submitShort:visited,#submitShort[type="submit"]:visited{color: #fff;}
 [type="submit"]:hover, [type="submit"]:focus,a[class="submit"]:hover, a[class="submit"]:focus {background: #e4213b;cursor: pointer;color: #fff;box-shadow: 1px 1px 10px #888;}
 [data-tip] {position: relative;cursor: help;border-bottom: 1px dotted #eb5569;position:relative;top:-2px;vertical-align:bottom;}
 [data-tip]:hover:after {content: attr(data-tip);position: absolute;top: 1.5em; left: -200px;padding: 5px 10px;background: #eb5569;color: #fff;z-index:50;}
@@ -245,8 +246,8 @@ input[readonly],textarea[readonly] {background-color: #ddd9d8;}
 
 .officeRelated{background-color:rgba(216,179,101,0.7);padding:3px;}
 .workplaceRelated{background-color:rgba(90,180,172,0.7);padding:3px;}
-
-
+.iBlock{display:inline-block;vertical-align:top;}
+.alignLabel{margin-top:4px;}
 
 #footerimg{height:50px; width:100%; background-image: url(images/footer.png); background-repeat: no-repeat;}
 .scroll-top-wrapper {position: fixed;opacity: 0;visibility: hidden;overflow: hidden;text-align: center;z-index: 99999999;width: 52px;height: 52px;line-height: 52px;right: 5px;bottom: 5px;padding-top: 2px;-webkit-transition: all 0.5s ease-in-out;-moz-transition: all 0.5s ease-in-out;-ms-transition: all 0.5s ease-in-out;-o-transition: all 0.5s ease-in-out;
