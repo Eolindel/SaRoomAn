@@ -722,6 +722,61 @@ var buildingOccupation = function(subslots){
 	return [names,occupation];
 } 
 
+var addDaysRectangles=function(displayZone,paletteDays,weekDays){
+	//adding each day and make them clickable
+	for (var j=1;j<7;j++) {
+		var day=displayZone.append('g')
+			.attr("data-day",j)
+			.attr("class","weekDay")
+			.attr('transform', 'translate(0,'+((j-1)*45)+')')
+			.on('click', function() {
+				if($('input[name="day"]').length){
+					$('input[name="day"]').trigger("change");
+					var indixDay=d3.select(this).attr('data-day');
+					$('input[name="day"]:checked').prop('checked', false);
+		      	$('[id="day'+indixDay+'"]').prop('checked', true);
+		      	updateEnd();				
+				}
+	       });
+		day.append('rect')
+			.attr('width',dayDims.width+'px')
+			.attr('height',dayDims.height+'px')
+			.attr('fill',paletteDays[j]);
+		day.append('text')
+			.attr("x",20)
+			.attr("y",'18px')
+			.classed('nameDays',true)
+			.text(weekDays[j]);
+		day.append('text')
+			.attr("x",20)
+			.attr('id','dateDay'+j)
+			.attr("y",'37px')
+			.attr("text-anchor", "left")
+			.attr("font-size","0.8em")
+			.text();	
+	}
+}
 
+var addBars = function (dayDims,scheduleZone,sliderHour) {
+	//Adding vertical bars as label
+	for(var j=sliderHour.min;j<=sliderHour.max;j+=15){
+		if(j%60===0){
+		scheduleZone.append('text')
+			.attr("font-size","0.8em")
+			.attr("x",(j-sliderHour.min))
+			.attr("y",'-5px')
+			.attr("text-anchor", "middle")
+			.text(minToHoursOnly(j));	
+		scheduleZone.append('path')
+			.attr('d','M'+(j-sliderHour.min)+' 0 V '+(6*dayDims.height))
+			.attr('stroke','#b3b3b3')
+			.attr('stroke-width','2px');		
+		}else{
+		scheduleZone.append('path')
+			.attr('d','M'+(j-sliderHour.min)+' 0 V '+(6*dayDims.height))
+			.attr('stroke','#b3b3b3');	
+		}
+	}		
+}
 
 	
