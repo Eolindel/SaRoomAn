@@ -69,7 +69,7 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 	$line.='<h2 id="schedule" '.controlValues().'>Contribute to the lab schedule <abbr data-tip="You must select a user, a room and a day before being able to add a slot"><img src="images/icones/help.png" alt="help"></abbr></h2>';
 
 
-	$line.='<form method="post" action="schedule_copy.php"><label for="date" class="label_court2">date : </label>&nbsp;'.input_r('date', $object, 10).' <img src="images/ajax-loader.gif" id="loadingDate"><input type="submit" id="submitShort" value="Copy"><br>';	
+	$line.='<form method="post" action="schedule_copy.php"><label for="date" class="label_court2">date : </label>&nbsp;'.input_r('date', $object, 10).' <img src="images/ajax-loader.gif" id="loadingDate"><input type="submit" id="submitShort" value="Copy"> <a href="schedule_delete.php" class="submitShort" id="deleteWeek">Delete</a> the schedule of this week<br>';	
 
 	$line.='<label for="id_user" class="label_court2">Schedule of user<sup>*</sup> : </label>';
 	function selectUserWithRooms($value,$id,$object,$critere){

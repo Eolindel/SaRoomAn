@@ -577,7 +577,7 @@ var LiveOccupation = function (j,x,y) {
       .on("mousemove", mousemove);	
 }
 
-console.log(occupations);
+//console.log(occupations);
 for(var j=0;j<occupations.length;j++){
 	var maxOfGraph=d3.max(occupations[j][1], function(d) { return d.y+1; });
 	var graph = graphzone.append("g").attr("data-day",j).attr("transform", "translate("+dayDims.width+","+(margins.top+j*margins.lineheight+margins.graphspace*(j-1))+")");

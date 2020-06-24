@@ -91,8 +91,6 @@ var updateEnd = function(start,slotLength){
 }
 
 var updateRoomSchedule = function () {
-	
-	//$line.='<span id="office" data-idSvg="'.$user['oSvg'].'" data-id="'.$user['oId'].'" data-human="'.$user['office'].'"></span>';
 		roomName=$('#hroom').text();
 		if($('#both').is(':checked')){
 			d3.select('#slot').select('rect').attr('height',dayDims.height*2/3).attr('y','0');
@@ -107,8 +105,6 @@ var updateRoomSchedule = function () {
 			d3.select('#slot').select('rect').attr('height',dayDims.height/3).attr('y','30');
 			d3.select('#slot').select('text').text(roomName).attr('y','42').attr('opacity',1);
 		}
-		//$('input[name="room"]').trigger('change');		
-		//loading the room occupation	
 }
 
 //updating the schedule when the room is changed
@@ -171,27 +167,7 @@ for(var j=sliderHour.min;j<=sliderHour.max;j+=15){
 
 }	
 
-//SLOT
-//SLOT	
-//add the slot that we're adding
-var addSlotSchedule=function () {
-var slot=scheduleZone.append('g')
-		.attr("id","slot")
-		.attr('transform', 'translate(0,0)');
-	slot.append('rect')
-		.attr('width','0')
-		.attr("fill",'#e31a1c')
-		.attr('height',dayDims.height);	
-	slot.append('text')
-		.attr('y','12px')
-		.attr('x','3px')
-		.attr('font-size','0.8em')
-		.attr('opacity',0);
-}	
 
-addSlotSchedule();	
-//SLOT
-//SLOT
 
 		
 //adding each day and make them clickable
@@ -226,6 +202,29 @@ for (var j=1;j<7;j++) {
 		.text();	
 }
 
+//SLOT
+//SLOT	
+//add the slot that we're adding
+var addSlotSchedule=function () {
+var slot=scheduleZone.append('g')
+		.attr("id","slot")
+		.attr('transform', 'translate(0,0)');
+	slot.append('rect')
+		.attr('width','0')
+		.attr("fill",'#e31a1c')
+		.attr('height',dayDims.height);	
+	slot.append('text')
+		.attr('y','12px')
+		.attr('x','3px')
+		.attr('font-size','0.8em')
+		.attr('opacity',0);
+}	
+
+addSlotSchedule();	
+//SLOT
+//SLOT
+
+
 
 //ROOMS
 
@@ -241,6 +240,7 @@ $('input[name="shortRoom"]').on('change',function(){
 
 $('label[for="shortRoomoffice"]').addClass('officeRelated');
 $('label[for="shortRoomworkplace"]').addClass('workplaceRelated');
+
 //trigger room change if room clicked on map
 var updateRoom = function (inData,context) {
 	var room=inData;
@@ -269,14 +269,11 @@ var updateRoom = function (inData,context) {
       		.style('fill',paletteRooms[1])
       		.style('fill-opacity',0.7);
       }     	 		
-   	
-   	
-   	
 }
 
 
 
-
+//Hiding or not the maps if the checkboxes are changed 
 $('.floors').on("change",function(){
 		if($(this).is(':checked')){
 			$('div[data-map="'+$(this).attr('value')+'"]').show();
@@ -287,7 +284,7 @@ $('.floors').on("change",function(){
 
 var roomList=[]
 
-//import maps
+//import maps 
 	$(".mapDisplay").each(function () {
 		var file=$(this).data('map');
 		var floor=$(this).data('floor');
@@ -327,8 +324,7 @@ var roomList=[]
 					$('input[name="room"]').trigger('change');	
 			})
    		}
- 		 });        
-			//Styling must be done here !
+ 		 });   //end ajax     
       });	      
 	});
 	
@@ -491,13 +487,9 @@ var sendSlotSchedule = function (office,workplace) {
  		 
 }//end of function 
 
-//trigger the sending of the slot if not editing, it is already triggered if we are editing
-/*if(!$('#requestEdit').length){
-	console.log('editslotrequested');
-	sendSlotSchedule(office,workplace);
-}*/
 
 
+//update the schedule when the date is changed
 $('input[name="date"]').on("change",function(){
 	//console.log('datechanged');
 	sendSlotSchedule(office,workplace);
@@ -505,7 +497,7 @@ $('input[name="date"]').on("change",function(){
 
 
 var BothRoomsVisible = 1 ;
-
+//manage things when both is checked to hide/show some possibilities and prevent people from doing things 
 var bothRooms = function(office,workplace){
 	if($( "#id_user option:selected" ).data('widroom') !== undefined && $( "#id_user option:selected" ).data('oidroom') !== undefined ){
 		BothRoomsVisible = 1;
@@ -539,13 +531,12 @@ var bothRooms = function(office,workplace){
 
 
 
+
+
+bothRooms(office,workplace);
 //////////////////
 ///CHANGE OF USER
 //////////////////
-
-bothRooms(office,workplace);
-
-
 var updatingUser = function(){
 	
 	//resetting color of office and workplace
@@ -624,7 +615,7 @@ updatingUser();
 ///SLOTS MANAGEMENT
 
 
-
+//Create an object which corresponds to what must be submitted
 var makeSubmit = function(){
 	var submit={'day':$('input[name="day"]:checked').val(),
 					'date':$('input[name="day"]:checked').data('date'),
