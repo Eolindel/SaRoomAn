@@ -52,7 +52,7 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 	$line1='';
 	$line2='';	
 	
-	$reponse=$bdd->query('SELECT * FROM `maps`');
+	$reponse=$bdd->query('SELECT floor,building,file FROM `maps`');
 	while($floor=$reponse->fetch()) {
 		$line1.=checkbox_r($floor['building'].$floor['floor'],$floor['file'],$floor['building'].' '.$floor['floor'],array($floor['building'].$floor['floor']=>1),'floors');
 		$line2.='<div id="'.str_ireplace('.svg', '',$floor['file']).'" data-map="'.$floor['file'].'" data-floor="'.$floor['floor'].'" data-building="'.$floor['building'].'" class="mapDisplay"> </div>';
@@ -61,11 +61,7 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 	$line.='<label for="" class="label_court2">Floors to display</label>'.$line1.'<br>'.$line2;	
 
 	echo $line;	
-	
-/*
-
-*/
-	
+		
 	echo '<script type="text/javascript" src="includes/functions.js"></script><script type="text/javascript" src="includes/schedule_user.js"></script>';	
 }
 ?>

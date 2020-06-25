@@ -21,10 +21,10 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 		$line.='<div id="building">';	
 		$line.='</div>';	
 		
-		$floors = $bdd->prepare("SELECT * FROM `maps` WHERE building=:building");		
+		$floors = $bdd->prepare("SELECT floor,building,file FROM `maps` WHERE building=:building");		
 		$floors->execute(array("building"=>$building["building"]));
 		while($floor=$floors->fetch(PDO::FETCH_ASSOC)) {
-			$reponse=$bdd->prepare("SELECT * FROM `rooms` WHERE building=:building AND floor=:floor ORDER BY officeName");
+			$reponse=$bdd->prepare("SELECT `id_room`, `building`, `floor`, `idSvg`, `officeName`, `commonName`, `surface`, `telephone1`, `telephone2`, `responsable`, `places`, `max` FROM `rooms` WHERE building=:building AND floor=:floor ORDER BY officeName");
 			$reponse->execute(array("floor"=>$floor["floor"],"building"=>$floor["building"]));
 			$line.='<span class="innermap" data-map="'.$floor["file"].'" data-floor="'.$floor["floor"].'" data-building="'.$floor["building"].'"></span>';//<h2>'.$floor["building"].$floor["floor"].'</h2>
 		}		

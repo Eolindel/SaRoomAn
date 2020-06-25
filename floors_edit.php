@@ -61,7 +61,7 @@ if($submit['building']!='' AND $submit['floor']!='' AND in_array($submit['file']
 
 //Querying the last version of the floor
 if($edit >= 1) {
-		$reponse=$bdd->prepare("SELECT * FROM `maps` WHERE id_map=:id_map");
+		$reponse=$bdd->prepare("SELECT floor,building,file FROM `maps` WHERE id_map=:id_map");
 		$reponse->execute(array("id_map"=>intval($object['id_map'])));
 		$object=$reponse->fetch();
 }	

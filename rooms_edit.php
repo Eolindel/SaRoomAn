@@ -47,7 +47,7 @@ if($submit['building']!='' AND $submit['floor']!='' AND $submit['idSvg']!='' AND
 
 //Querying the last version of the room
 if($edit >= 1) {
-		$reponse=$bdd->prepare("SELECT * FROM `rooms` WHERE id_room=:id_room");
+		$reponse=$bdd->prepare("SELECT `id_room`, `building`, `floor`, `idSvg`, `officeName`, `commonName`, `surface`, `telephone1`, `telephone2`, `responsable`, `places`, `max` FROM `rooms` WHERE id_room=:id_room");
 		$reponse->execute(array("id_room"=>intval($object['id_room'])));
 		$object=$reponse->fetch();
 }	

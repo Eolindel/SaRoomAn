@@ -51,7 +51,7 @@ if($submit['mail']!='' AND $submit['prenom']!='' AND $submit['nom']!='' AND in_a
 
 //Querying the last version of the user
 if($edit >= 1) {
-		$reponse=$bdd->prepare("SELECT * FROM `roomusers` WHERE id_user=:id_user");
+		$reponse=$bdd->prepare("SELECT floor,building,file FROM `roomusers` WHERE id_user=:id_user");
 		$reponse->execute(array("id_user"=>intval($object['id_user'])));
 		$object=$reponse->fetch();
 }	
@@ -128,7 +128,7 @@ if($edit <= 1){
 
 	
 	$line.='<div id="mapDisplay">';
-	$floors = $bdd->query("SELECT * FROM `maps`");	
+	$floors = $bdd->query("SELECT floor,building,file FROM `maps`");	
 	while($floor=$floors->fetch(PDO::FETCH_ASSOC)) {
 		$line.='<img src="maps/'.$floor['file'].'" alt="building '.$floor['building'].' floor '.$floor['floor'].'">';
 	}	

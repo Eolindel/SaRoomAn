@@ -15,7 +15,7 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 	$data ='';
 
 	
-	$request=$bdd->prepare("SELECT * FROM `rooms` WHERE id_room=:id_room");
+	$request=$bdd->prepare("SELECT `id_room`, `building`, `floor`, `idSvg`, `officeName`, `commonName`, `surface`, `telephone1`, `telephone2`, `responsable`, `places`, `max` FROM `rooms` WHERE id_room=:id_room");
 	$request->execute(array('id_room'=>$object["id_room"]));
 	$room=$request->fetch(PDO::FETCH_ASSOC);
 	foreach($room as $key=>$value){

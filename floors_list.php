@@ -31,7 +31,7 @@ if(in_array($_SESSION['roomStatus'], array(5))){
 	<p>The <i>Floor</i> and <i>Building</i> columns for the floors will have to match exactly with the <i>Building</i> and <i>Floor</i> columns given in the rooms database (beware of lower and upper caps !).</p>';	
 	$line.='<table>';
 	$line.=th_floors();
-	$floors = $bdd->query("SELECT * FROM `maps`");	
+	$floors = $bdd->query("SELECT id_map,floor,building,file FROM `maps`");	
 	while($floor=$floors->fetch(PDO::FETCH_ASSOC)) {
 		$line.=display_floors($floor);
 		$listFloors[]=$floor;

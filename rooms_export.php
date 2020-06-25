@@ -6,7 +6,7 @@
 <?php
 
 if(in_array($_SESSION['roomStatus'], array(5))){
-	$reponse = $bdd->query("SELECT * FROM `maps`");
+	$reponse = $bdd->query("SELECT floor,building,file FROM `maps`");
 	$line='';
    while($floor=$reponse->fetch()) {
    	$line.='<form method="post" action="rooms_exported.php">';
