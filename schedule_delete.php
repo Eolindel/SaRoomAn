@@ -7,10 +7,10 @@
 
 if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 	$object=array();
-	if(isset($_POST['date']) AND preg_match('/^(\d{2})-(\d{2})-(\d{4})$/', $_POST['date'],$inputDate)){
-		$object['date']=$_POST['date'];
-		$object['date2']=$_POST['date'];
-		$object["week"]=date("W",strtotime($_POST['date']));	
+	if(isset($_POST['date2']) AND preg_match('/^(\d{2})-(\d{2})-(\d{4})$/', $_POST['date2'],$inputDate)){
+		$object['date']=$_POST['date2'];
+		$object['date2']=$_POST['date2'];
+		$object["week"]=date("W",strtotime($_POST['date2']));	
 		$object["firstweek"]=$object["week"];	
 		$object["endweek"]=$object["week"];
 		$object["year"]=$inputDate[3];	
@@ -18,8 +18,8 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 		$object['enddate']=date('d-m-Y',strtotime($object["year"].'W'.$object["endweek"]));		
 		$object['kindsWeek']='All';
 		
-		if(isset($_POST['id_user'])){
-			$object['id_user']=intval($_POST['id_user']);
+		if(isset($_POST['id_user2'])){
+			$object['id_user']=intval($_POST['id_user2']);
 			$reponse=$bdd->prepare("SELECT u.id_user,u.prenom,u.nom,o.officeName AS office,o.id_room AS oId,o.idSvg AS oSvg,
 													 w.officeName AS workplace,w.id_room AS wId,w.idSvg AS wSvg 
 													 FROM `roomusers` AS u LEFT JOIN `rooms` AS o ON o.id_room=u.ref_office LEFT JOIN `rooms` AS w ON w.id_room=u.ref_workplace WHERE u.active=1 AND u.id_user=:id_user");
@@ -29,9 +29,9 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 			//if both conditions are met
 			
 			$line='';
-			$line.='<h2 id="schedule" '.controlValues().'>Delete the schedule of this week for '.$object['prenom'].' '.$object['nom'].'</h2>';
+			$line.='<h2 id="schedule" '.controlValues().'>Delete the schedule of these weeks for '.$object['prenom'].' '.$object['nom'].'</h2>';
 		
-			$line.='<form method="post" action="schedule_copy2.php">';	
+			$line.='<form method="post" action="schedule_delete2.php">';	
 			$line.='<label for="startdate" class="label_court2">Starting week : </label>&nbsp;'.input_r('startdate', $object, 10).'<span id="startweek"></span> <img src="images/ajax-loader.gif" id="loadingStartDate"><br>';	
 			$line.='<label for="enddate" class="label_court2">Ending week : </label>&nbsp;'.input_r('enddate', $object, 10).'<span id="endweek"></span> <img src="images/ajax-loader.gif" id="loadingEndDate"><br>';
 			$line.='<label for="kindsWeek" class="label_court2">Kinds of week : </label>&nbsp;'.radio_r('kindsWeek', 'Odd', 'Odd', $object).radio_r('kindsWeek', 'Even', 'Even', $object).radio_r('kindsWeek', 'All', 'All', $object).'<br>'.input_r('id_user', $object, 10,'hidden').input_r('week', $object, 10,'hidden').input_r('year', $object, 10,'hidden').'<div id="addedInputs"></div>';

@@ -98,7 +98,7 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 	}
 	$line.='</select></form></div>';
 	
-	$line.='<div class="tCell"><form method="post" action="schedule_delete.php" class="dInline"><input type="submit" id="deleteWeek" class="submitShort" value="Delete"></form> the schedule of this week'.input_r('date2', $object, 10,"hidden").input_r('id_user2', $object, 10,"hidden").'</div></div>&nbsp;<br>';		
+	$line.='<div class="tCell"><form method="post" action="schedule_delete.php" class="dInline"><input type="submit" id="deleteWeek" class="submitShort" value="Delete">'.input_r('date2', $object, 10,"hidden").input_r('id_user2', $object, 10,"hidden").'</form> the schedule of this week</div></div>&nbsp;<br>';		
 	$line.='<div id="displayWeek"></div>';	
 	$line.='<div id="occupationRoom"></div>';	
 	$line.='<div id="occupationRoom2"></div>';	

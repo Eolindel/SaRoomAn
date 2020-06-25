@@ -4,8 +4,9 @@ $(document).ready(function() {
 
 //Make duplicate of form for the deletion of the slots of the week
 var copyFormDelete = function(){
-	$('#date2').val($('#date').val());
-	$('#id_user2').val(parseInt($('#id_user').val(),10));
+	$('#date2').val($('#date').val()).trigger("change");
+	$('#id_user2').val(parseInt($('#id_user').val(),10)).trigger("change");
+	
 }
 copyFormDelete();
 
