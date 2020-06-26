@@ -52,7 +52,6 @@ var showSendSlot=function () {//Show or hide the submit button and control the d
 			//If day also given
 			if(!isNaN(day) && day!==0 ){
 				$('#sendSlot').show();
-				//console.log(slotList);
 				checkOverlaps();	
 				//Displaying the occupation of the room
 				var day= $('input[name="day"]:checked').val();
@@ -94,6 +93,7 @@ var updateEnd = function(start,slotLength){
 		slotDay=d3.select('input[name="day"]:checked').node().value;
 		d3.select('#slot').attr('transform', 'translate('+(start-sliderHour.min)+','+(slotDay-1)*dayDims.height+')');
 		d3.select('#slot').select('rect').attr('width',slotLength);
+		//console.log('test');
 		showSendSlot();
 	}	
 }
@@ -134,7 +134,10 @@ var sliderLength = {'min':15,'max':720,'step':15,'default':360,'ticks':9,'output
 var Hours=sliderStep(sliderHour);
 var Length = sliderStep(sliderLength);
 
-$('input[name="day"]').on("change",updateEnd);
+$('input[name="day"]').on("change",	updateEnd);
+
+
+
 
 
 var weekSchedule=d3.select('#displayWeek').append('svg');
@@ -156,6 +159,19 @@ var scheduleZone = displayZone.append('g')
 addBars(dayDims,scheduleZone,sliderHour);	
 		
 addDaysRectangles(displayZone,paletteDays,weekDays);
+//Make days rectangles clickable
+d3.selectAll(".weekDay")
+.on('click', function() {
+	if($('input[name="day"]').length){
+		var indixDay=d3.select(this).attr('data-day');
+		$('input[name="day"]:checked').prop('checked', false);
+   	$('[id="day'+indixDay+'"]').prop('checked', true);
+   	$('input[name="day"]').filter(':checked').trigger('change');
+   	//updateEnd();				
+	}
+ });
+
+
 
 //SLOT
 //SLOT	

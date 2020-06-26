@@ -722,6 +722,8 @@ var buildingOccupation = function(subslots){
 	return [names,occupation];
 } 
 
+
+
 var addDaysRectangles=function(displayZone,paletteDays,weekDays){
 	//adding each day and make them clickable
 	for (var j=1;j<7;j++) {
@@ -729,15 +731,6 @@ var addDaysRectangles=function(displayZone,paletteDays,weekDays){
 			.attr("data-day",j)
 			.attr("class","weekDay")
 			.attr('transform', 'translate(0,'+((j-1)*45)+')')
-			.on('click', function() {
-				if($('input[name="day"]').length){
-					$('input[name="day"]').trigger("change");
-					var indixDay=d3.select(this).attr('data-day');
-					$('input[name="day"]:checked').prop('checked', false);
-		      	$('[id="day'+indixDay+'"]').prop('checked', true);
-		      	updateEnd();				
-				}
-	       });
 		day.append('rect')
 			.attr('width',dayDims.width+'px')
 			.attr('height',dayDims.height+'px')
