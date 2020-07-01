@@ -29,7 +29,35 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 			$line.='<span class="innermap" data-map="'.$floor["file"].'" data-floor="'.$floor["floor"].'" data-building="'.$floor["building"].'"></span>';//<h2>'.$floor["building"].$floor["floor"].'</h2>
 		}		
 	}
-	
+	$line.='<h2>Members of the group</h2>';
+	$line.='<p><b>Supervisor</b> ';
+	if(in_array($_SESSION['roomStatus'], array(2,3,4,5) )  ){
+		$line.=$_SESSION['prenom'].' '.$_SESSION['nom'];
+	}else{
+		if(isset($_SESSION['ref_responsable'])){
+			$reponse=$bdd->prepare("SELECT `id_user`,`prenom`,`nom` FROM `roomusers` WHERE id_user=:ref_responsable");
+			$reponse->execute(array("ref_responsable"=>$_SESSION['ref_responsable']));
+			$responsable=$reponse->fetch(PDO::FETCH_ASSOC);
+			$line.=$responsable['prenom'].' '.$responsable['nom'];
+		}
+	}
+	$line.='</p><p><b>Group under supervision</b><br>';
+	if(in_array($_SESSION['roomStatus'], array(2,3,4,5) )  ){
+		$reponse=$bdd->prepare("SELECT `prenom`,`nom` FROM `roomusers` WHERE ref_responsable=:ref_responsable");
+		$reponse->execute(array("ref_responsable"=>$_SESSION['id_user']));
+		while($underling=$reponse->fetch(PDO::FETCH_ASSOC)){
+			$line.=$underling['prenom'].' '.$underling['nom'].', ';
+		}
+	}else{
+		if(isset($responsable)){
+			$reponse=$bdd->prepare("SELECT `prenom`,`nom` FROM `roomusers` WHERE ref_responsable=:ref_responsable");
+			$reponse->execute(array("ref_responsable"=>$responsable['id_user']));
+			while($underling=$reponse->fetch(PDO::FETCH_ASSOC)){
+				$line.=$underling['prenom'].' '.$underling['nom'];
+			}
+		}
+	}	
+	$line.='</p>';
 
 	$line.='<h2>Schedule (Per User)</h2>';
 	$line.='<table id="PeopleList">';

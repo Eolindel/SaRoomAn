@@ -253,7 +253,7 @@ if(isset($_SESSION['roomStatus']) AND $_SESSION['roomStatus']==5) {
 if(isset($_SESSION['roomStatus']) AND in_array($_SESSION['roomStatus'], array(5))) {		
 		$line.='<span class="link_left_2">Floors</span>
 		<a href="floors_list.php" class="link_left">Floors</a>
-		<a href="map_build_from_db.php" class="link_left">Build map from imported data</a>
+		<a href="map_prebuild.php" class="link_left">Build map from imported data</a>
 		';		
  }		
  echo $line;

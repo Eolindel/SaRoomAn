@@ -74,7 +74,7 @@ if($edit <= 1){
 	}elseif($edit==1) {
 		$line.='<h2>Edit the floor '.$object['floor'].' in the building '.$object['building'].'</h2>';
 	}
-
+	$line.='<p>The name of the floor and building must match the corresponding columns </p>';
 
 	if($edit >= 1){
 	   $line.='<form method="post" action="floors_edit.php?id_map='. $object['id_map'].'">';

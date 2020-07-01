@@ -7,7 +7,7 @@
 
 if(in_array($_SESSION['roomStatus'], array(5))){
 	//Loading file entirely before doing some replace operations
-	$lineFile=file_get_contents('maps_build/elements-decor-clean2.svg');
+	$lineFile=file_get_contents('maps/M6Rdc.svg');
 	$lineFile=preg_replace('/^\s</','<',$lineFile);
 	$lineFile=preg_replace('/\n\s*id="text[^"]*"/m','',$lineFile);
 	$lineFile=preg_replace('/\n\s*id="rect[^"]*"/m','',$lineFile);
@@ -35,7 +35,7 @@ if(in_array($_SESSION['roomStatus'], array(5))){
 	$lineFile=str_replace('stroke-linejoin:miter;','',$lineFile);
 	$lineFile=str_replace('stroke-dasharray:none;','',$lineFile);
 
-	file_put_contents('maps_build/elements-decor-clean2.svg', $lineFile);
+	file_put_contents('maps/M6Rdc-cleaned.svg', $lineFile);
 }
 ?>
 <?php include('includes/foot.php'); ?>  

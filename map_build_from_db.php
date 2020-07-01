@@ -6,11 +6,22 @@
 <?php
 
 if(in_array($_SESSION['roomStatus'], array(5))){
-	
-$line='';	
+$line='';
+$ok=0;
 $submit=array();
-$submit['building']="M6";
-$submit['floor']="R1";
+	if(isset($_POST['completefloor'])){
+		$floor=explode('%',$_POST['completefloor']);	
+
+		$submit['building']=$floor[0];
+		$submit['floor']=$floor[1];
+		$ok=1;	
+	}elseif(isset($_POST['floor']) AND isset($_POST['building'])) {
+		$submit['building']=$_POST['building'];
+		$submit['floor']=$_POST['floor'];	
+		$ok=1;
+	}
+
+if($ok==1){
 $roomSize=array("height"=>40,"width"=>29);
 	
 	
@@ -165,6 +176,13 @@ $linesFile .='</svg>';
 		}else{
 			$line.='<h1>There is already a file for this floor and building, clean up the maps_build directory</h1>';		
 		}
+
+
+
+
+}else{
+	$line.='You did not enter a floor and building';
+}
 		echo $line;
 }
 ?>

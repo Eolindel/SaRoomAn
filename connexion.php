@@ -96,7 +96,7 @@ if(!isset($_SESSION['roomStatus']) OR $_SESSION['roomStatus']==0){ ?>
 <input type="submit" value="Log in">
 </form>
 
-<p>If you forgot your password, contact the financial manager, he will be able to reset your password.</p>
+<p>If you forgot your login, contact the financial manager, he will be able to reset your password.</p>
  
 <?php 
 }else{
