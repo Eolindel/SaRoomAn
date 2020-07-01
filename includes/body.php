@@ -245,12 +245,15 @@ if(isset($_SESSION['roomStatus']) AND $_SESSION['roomStatus']==5) {
 		<a href="rooms_capacity.php" class="link_left">Capacity</a>
 		<a href="rooms_threshold.php" class="link_left">Threshold</a>
 		<a href="rooms_occupations.php" class="link_left">Occupation</a>';	
-		
-if(isset($_SESSION['roomStatus']) AND in_array($_SESSION['roomStatus'], array(3,4,5))) {		
+if(isset($_SESSION['roomStatus']) AND $_SESSION['roomStatus']==5) {		
 		$line.='<a href="rooms_preimport.php" class="link_left">Batch add/update of rooms</a>
-		<a href="rooms_export.php" class="link_left">Export rooms</a>
-		<span class="link_left_2">Floors</span>
+		<a href="rooms_export.php" class="link_left">Export rooms</a>';		
+}		
+		
+if(isset($_SESSION['roomStatus']) AND in_array($_SESSION['roomStatus'], array(5))) {		
+		$line.='<span class="link_left_2">Floors</span>
 		<a href="floors_list.php" class="link_left">Floors</a>
+		<a href="map_build_from_db.php" class="link_left">Build map from imported data</a>
 		';		
  }		
  echo $line;

@@ -17,8 +17,9 @@ if(in_array($_SESSION['roomStatus'], array(5))){
 	   	$line.=implode(',',$room)."\n";
 	   	
 	   }
-	   echo 'Le fichier '.$submit['building'].$submit['floor'].'-'.date ('Y-m-d-H-i').'.csv'.' a été enregistré dans le dossier exported_files.';
 	   file_put_contents('exported_files/'.$submit['building'].$submit['floor'].'-'.date ('Y-m-d-H-i').'.csv', $line);
+	   echo 'Le fichier '.$submit['building'].$submit['floor'].'-'.date ('Y-m-d-H-i').'.csv'.' a été enregistré dans le dossier exported_files.';
+
 	}
 }
 ?>

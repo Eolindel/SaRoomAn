@@ -79,7 +79,7 @@ if($nobody==1){
 	}
 }
 
-if($_SESSION['logged']==0){ ?>
+if(!isset($_SESSION['roomStatus']) OR $_SESSION['roomStatus']==0){ ?>
 <h2>Log in</h2>
 <form method="post" action="connexion.php">
 <label for="login" class="label_court">Log in<sup>*</sup>  : </label> 
@@ -99,7 +99,7 @@ if($_SESSION['logged']==0){ ?>
 <p>If you forgot your password, contact the financial manager, he will be able to reset your password.</p>
  
 <?php 
-}else if($_SESSION['logged']==1){
+}else{
 	echo '<h2>You are logged in as '.$_SESSION['prenom'].' '.$_SESSION['nom'].'</h2>';
 	if($unsure!=0)	{
 	echo '<p class="warning">Your password is a default one and is unsure. You must change it.</p>
