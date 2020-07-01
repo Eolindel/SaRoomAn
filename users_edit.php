@@ -51,7 +51,7 @@ if($submit['mail']!='' AND $submit['prenom']!='' AND $submit['nom']!='' AND in_a
 
 //Querying the last version of the user
 if($edit >= 1) {
-		$reponse=$bdd->prepare("SELECT floor,building,file FROM `roomusers` WHERE id_user=:id_user");
+		$reponse=$bdd->prepare("SELECT `id_user`, `prenom`, `nom`, `status`, `team`, `login`, `active`, `mail`, `notifications`, `ref_office`, `ref_workplace`, `statut`, `telephone`, `roomStatus`, `ref_responsable` FROM `roomusers` WHERE id_user=:id_user");
 		$reponse->execute(array("id_user"=>intval($object['id_user'])));
 		$object=$reponse->fetch();
 }	

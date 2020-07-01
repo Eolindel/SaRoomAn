@@ -32,28 +32,28 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 	$line.='<h2>Members of the group</h2>';
 	$line.='<p><b>Supervisor</b> ';
 	if(in_array($_SESSION['roomStatus'], array(2,3,4,5) )  ){
-		$line.=$_SESSION['prenom'].' '.$_SESSION['nom'];
+		$line.='<a href="schedule_user.php?id_user='.$_SESSION['id_user'].'">'.$_SESSION['prenom'].' '.$_SESSION['nom'].'</a>';
 	}else{
 		if(isset($_SESSION['ref_responsable'])){
 			$reponse=$bdd->prepare("SELECT `id_user`,`prenom`,`nom` FROM `roomusers` WHERE id_user=:ref_responsable");
 			$reponse->execute(array("ref_responsable"=>$_SESSION['ref_responsable']));
 			$responsable=$reponse->fetch(PDO::FETCH_ASSOC);
-			$line.=$responsable['prenom'].' '.$responsable['nom'];
+			$line.='<a href="schedule_user.php?id_user='.$responsable['id_user'].'">'.$responsable['prenom'].' '.$responsable['nom'].'</a>';
 		}
 	}
 	$line.='</p><p><b>Group under supervision</b><br>';
 	if(in_array($_SESSION['roomStatus'], array(2,3,4,5) )  ){
-		$reponse=$bdd->prepare("SELECT `prenom`,`nom` FROM `roomusers` WHERE ref_responsable=:ref_responsable");
+		$reponse=$bdd->prepare("SELECT `id_user`,`prenom`,`nom` FROM `roomusers` WHERE ref_responsable=:ref_responsable");
 		$reponse->execute(array("ref_responsable"=>$_SESSION['id_user']));
 		while($underling=$reponse->fetch(PDO::FETCH_ASSOC)){
-			$line.=$underling['prenom'].' '.$underling['nom'].', ';
+			$line.='<a href="schedule_user.php?id_user='.$underling['id_user'].'">'.$underling['prenom'].' '.$underling['nom'].'</a>, ';
 		}
 	}else{
 		if(isset($responsable)){
-			$reponse=$bdd->prepare("SELECT `prenom`,`nom` FROM `roomusers` WHERE ref_responsable=:ref_responsable");
+			$reponse=$bdd->prepare("SELECT `id_user`,`prenom`,`nom` FROM `roomusers` WHERE ref_responsable=:ref_responsable");
 			$reponse->execute(array("ref_responsable"=>$responsable['id_user']));
 			while($underling=$reponse->fetch(PDO::FETCH_ASSOC)){
-				$line.=$underling['prenom'].' '.$underling['nom'];
+				$line.='<a href="schedule_user.php?id_user='.$underling['id_user'].'">'.$underling['prenom'].' '.$underling['nom'].'</a>, ';
 			}
 		}
 	}	

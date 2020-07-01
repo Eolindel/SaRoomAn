@@ -13,7 +13,7 @@ foreach ($submit as $key => $value)	{
 		$submit[$key]=$_POST[$key];}}
 
 if($submit['login']!='')	{
-	$reponse = $bdd->prepare("SELECT * FROM `roomusers` WHERE login=:login AND active='1'");
+	$reponse = $bdd->prepare("SELECT * FROM `roomusers` WHERE login=:login AND active='1' AND roomStatus>0");
 	$reponse->execute(array("login"=>$submit['login']));
 	
 	//echo var_export($reponse->errorInfo());

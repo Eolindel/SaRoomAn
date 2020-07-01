@@ -29,8 +29,27 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 			$line.='<span class="innermap" data-map="'.$floor["file"].'" data-floor="'.$floor["floor"].'" data-building="'.$floor["building"].'"></span>';//<h2>'.$floor["building"].$floor["floor"].'</h2>
 		}		
 	}
-	
-
+	$line.='<h2>Members of the team</h2>';
+	$line.='<p><b>Team Leaders (status 3 or above)</b> : ';
+	$reponse=$bdd->prepare("SELECT `id_user`,`prenom`,`nom` FROM `roomusers` WHERE team=:team AND roomStatus>=3");
+	$reponse->execute(array("team"=>$_SESSION['team']));
+	while($user=$reponse->fetch(PDO::FETCH_ASSOC)){
+		$line.='<a href="schedule_user.php?id_user='.$user['id_user'].'">'.$user['prenom'].' '.$user['nom'].'</a>, ';
+	}	
+	$line.='</p><b>Permanent people, Supervisors (status 2) : </b>';
+	$reponse=$bdd->prepare("SELECT `id_user`,`prenom`,`nom` FROM `roomusers` WHERE team=:team AND roomStatus=2");
+	$reponse->execute(array("team"=>$_SESSION['team']));
+	while($user=$reponse->fetch(PDO::FETCH_ASSOC)){
+		$line.='<a href="schedule_user.php?id_user='.$user['id_user'].'">'.$user['prenom'].' '.$user['nom'].'</a>, ';
+	}	
+	$line.='</p><b>Non permanent members (status 1) : </b>';	
+	$reponse=$bdd->prepare("SELECT `id_user`,`prenom`,`nom` FROM `roomusers` WHERE team=:team AND roomStatus=1");
+	$reponse->execute(array("team"=>$_SESSION['team']));
+	while($user=$reponse->fetch(PDO::FETCH_ASSOC)){
+		$line.='<a href="schedule_user.php?id_user='.$user['id_user'].'">'.$user['prenom'].' '.$user['nom'].'</a>, ';
+	}	
+	$line.='</p>';
+		
 	$line.='<h2>Schedule (Per User)</h2>';
 	$line.='<table id="PeopleList">';
 	$line.=th_SchedulePerson();
