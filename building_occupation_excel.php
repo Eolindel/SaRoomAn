@@ -29,7 +29,8 @@ if(in_array($_SESSION['roomStatus'], array(3,4,5))){
 		}
 		$line.='</table>';
 	}else if($edit==0){
-		$line='<form method="post"><label for="date" class="label_court">date : </label>'.input_r('date', $object, 10).'<input type="submit" value="Extraire pour la semaine choisie"></form><br>';
+		$line='<form method="post"><label for="date" class="label_court">date : </label>'.input_r('date', $object, 10).'<input type="submit" value="Extract data for this week (visual)"></form><br>';
+		$line='<form method="post" action="building_occupation_csv.php"><label for="date" class="label_court">date : </label>'.input_r('date', $object, 10).'<input type="submit" value="Extract data for this week (csv/excel)"></form><br>';
 	}else {
 		$line='Something went wrong, try again.';
 	}

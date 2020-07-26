@@ -8,7 +8,6 @@
 function	convertToHours($input){
 	$value=intval($input);
 	return str_pad(floor($value/60.0),2,'0',STR_PAD_LEFT).':'. str_pad(($value % 60),2,'0',STR_PAD_LEFT);
-
 }	
 	
 	function th_rooms(){
@@ -36,8 +35,6 @@ function display_slot_excel($slot){
 	return '<tr><td>'.$slot['nom'].'</td><td>'.$slot['prenom'].'</td><td>'.$slot['team'].'</td><td>'.$slot['mail'].'</td><td>'.$slot['statut'].'</td><td>'.$slot['telephone'].'</td><td>'.$slot['building'].'</td><td>'.$slot['floor'].'</td><td>'.$slot['officeName'].'</td><td>'.date ('d-m-Y',strtotime ($slot['date'])) .'</td><td>'.$slot['week'].'</td><td>'.convertToHours($slot['start']).'</td><td>'.convertToHours($slot['end']).'</td><td>'.convertToHours($slot['length']).'</td><td>'.$slot['valid'].'</td></tr>';
 
 }
-
-
 
 	function display_rooms($object){
 		$line='';
