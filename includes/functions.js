@@ -3,171 +3,186 @@
 var sliderHour = {'min':420,'max':1320,'step':15,'default':540,'ticks':6,'output':'#value-hour','input':'#slider-hour'};
 var sliderLength = {'min':15,'max':720,'step':15,'default':240.01,'ticks':9,'output':'#value-length','input':'#slider-length'};
 
-
+//Convert to formatted day Date() -> d-m-Y 
 DateToFormat = function (dateFormate, datetime) {
-	return $.datepicker.formatDate(dateFormate, datetime);}
+		return $.datepicker.formatDate(dateFormate, datetime);}
     
+//Convert format to Date : d-m-Y -> Date()
 FormatToDate = function  (dateFormate, datetime){
-	return $.datepicker.parseDate(dateFormate,  datetime);} 
+		return $.datepicker.parseDate(dateFormate,  datetime);} 
 
+//Get the date of the monday for the given Date()
 function getMonday(d) {
-  d = new Date(d);
-  var day = d.getDay(),
-      diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
-  return new Date(d.setDate(diff));
-}
-function addDays(date, days) {
-  var result = new Date(date);
-  result.setDate(result.getDate() + days);
-  return result;
+		d = new Date(d);
+		var day = d.getDay(),
+			diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+		return new Date(d.setDate(diff));
 }
 
+//Add a given number of days do a Date()
+var addDays = function (date, days) {
+		var result = new Date(date);
+		result.setDate(result.getDate() + days);
+		return result;
+}
 
+//Get the date of monday for this week
 var currentMonday = DateToFormat("dd-mm-yy",getMonday(new Date()));
 
-//sélecteur pour la date
+//Initialize datepicker for the dateInput field
 var initializeDate = function(dateInput){
-//sélecteur pour la date
-$( dateInput).datepicker({
-	dateFormat: "dd-mm-yy",	
-	gotoCurrent: true,
-	changeMonth: true,
-	changeYear: true,
-	firstDay: 1, 
-	showOtherMonths: true,
-	numberOfMonths:2,
-	onSelect: function(date){
-		$(dateInput).trigger("change");}      
-});	
-	
-//Date par défaut si la date est définie ou non
+		//sélecteur pour la date
+		$( dateInput).datepicker({
+				dateFormat: "dd-mm-yy",	
+				gotoCurrent: true,
+				changeMonth: true,
+				changeYear: true,
+				firstDay: 1, 
+				showOtherMonths: true,
+				numberOfMonths:2,
+				onSelect: function(date){
+				$(dateInput).trigger("change");}      
+				});	
+
+//Initialize the date if the date is currently empty with today
 (function () {    	
-	jour = $(dateInput).val();
-if (jour){
-	$(dateInput).datepicker( "option", "defaultDate", $(dateInput).val());
-} else {
-	$(dateInput).datepicker( "option", "defaultDate", new Date() );
-	$(dateInput).val(DateToFormat('dd-mm-yy', new Date()));
-	//alert(DateFormate('dd-mm-yy', new Date()));
-};
-})();	
+		 jour = $(dateInput).val();
+		 if (jour){
+		 	$(dateInput).datepicker( "option", "defaultDate", $(dateInput).val());
+		 } else {
+		 	$(dateInput).datepicker( "option", "defaultDate", new Date() );
+		 	$(dateInput).val(DateToFormat('dd-mm-yy', new Date()));
+		 };
+ })();	
 
 }
 initializeDate('#date')
 
+//Get weeknumber from Date()
 function getWeekNumber(d) {
-    // Copy date so don't modify original
-    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-    // Set to nearest Thursday: current date + 4 - current day number
-    // Make Sunday's day number 7
-    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
-    // Get first day of year
-    var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-    // Calculate full weeks to nearest Thursday
-    var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
-    // Return array of year and week number
-    return [d.getUTCFullYear(), weekNo];
+		// Copy date so don't modify original
+		d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+		// Set to nearest Thursday: current date + 4 - current day number
+		// Make Sunday's day number 7
+		d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+		// Get first day of year
+		var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+		// Calculate full weeks to nearest Thursday
+		var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+		// Return array of year and week number
+		return [d.getUTCFullYear(), weekNo];
 }
 
-
+//Dimensions of a day
 var dayDims={'height':45,'width':150};
+//Dimensions of the schedule
 var dims={'width':(sliderHour.max-sliderHour.min+dayDims.width+20),'height':290};
-var weekDays=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var paletteDays=['#cccccc','#b3e2cd','#fdcdac','#cbd5e8','#f4cae4','#e6f5c9','#fff2ae','#f1e2cc'];
-var paletteRooms=['#d8b365','#5ab4ac','#e9a3c9'];
-var slotList=[];
 
+var weekDays=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+//Colors for the different days
+var paletteDays=['#cccccc','#b3e2cd','#fdcdac','#cbd5e8','#f4cae4','#e6f5c9','#fff2ae','#f1e2cc'];
+//Colors of the rooms Office/workplace/Other room 
+var paletteRooms=['#d8b365','#5ab4ac','#e9a3c9'];
+//Initialize slot list
+var slotList=[];
+//Initialize office and workplace
 var office={'human':$('#office').data('human'),'ref_room':$('#office').data('id'),'idSvg':$('#office').data('idsvg')};
 var workplace={'human':$('#workplace').data('human'),'ref_room':$('#workplace').data('id'),'idSvg':$('#workplace').data('idsvg')};  
 
 
 
-//convert
+//convert minutes to hours
 var minToHours=function (val){
-	return Math.floor(val/60.0).toString().padStart(2, '0')+':'+parseInt(val%60.0,10).toString().padStart(2, '0')
-	}
-//hours as label for the schedule	
+		return Math.floor(val/60.0).toString().padStart(2, '0')+':'+parseInt(val%60.0,10).toString().padStart(2, '0')
+}
+
+//convert minutes to hours only as label for the schedule	
 var minToHoursOnly=function (val){
-	return Math.floor(val/60.0).toString().padStart(2, '0')+' h';
-	}
+		return Math.floor(val/60.0).toString().padStart(2, '0')+' h';
+}
 
-	
+//Returning true if first slot is intersecting with the second one	
 var slotsIntersecting=function(a,b){
-	return !(a.end <= b.start || a.start >= b.end );
+		return !(a.end <= b.start || a.start >= b.end );
 }	
-	
-var highlightElem =  function (elemId){
-    var elem = $(elemId);
-    elem.css("backgroundColor", "#ffffff"); // hack for Safari
-    elem.animate({ backgroundColor: '#9ecae1' }, 800);
-    setTimeout(function(){$(elemId).animate({ backgroundColor: "#ffffff" }, 800)},800);
-}	
-	
 
-var buildSampling=function (slots, slot = false) {
-	var Sampling=[];	 
-	for (var k=0;k<slots.length;k++) {
-		var start=parseInt(slots[k].start,10);
-		var end=parseInt(slots[k].end,10);
-		if(Sampling.indexOf(start)===-1){
-			Sampling.push(start);		}
-		if(Sampling.indexOf(end)===-1){
-			Sampling.push(end);		}		
-	};
-	if(slots.length>0){
-		if(parseInt(slots[0].start,10)!==sliderHour.min){
-			Sampling.push(sliderHour.min);		}	
-	}else{Sampling.push(sliderHour.min);}
+//Highlight elementwith the given identifier	
+var highlightElem =  function (elemId){
+		var elem = $(elemId);
+		elem.css("backgroundColor", "#ffffff"); // hack for Safari
+		elem.animate({ backgroundColor: '#9ecae1' }, 800);
+		setTimeout(function(){$(elemId).animate({ backgroundColor: "#ffffff" }, 800)},800);
+}	
 	
-	if(Sampling.indexOf(sliderHour.max)=== -1){
-		Sampling.push(sliderHour.max);	}
-			
-	if(slot){
-		if(Sampling.indexOf(parseInt(slot.start,10))===-1){
-			Sampling.push(parseInt(slot.start,10));}
-		if(Sampling.indexOf(parseInt(slot.end,10))===-1){
-			Sampling.push(parseInt(slot.end,10));}	
-	}
-	return Sampling.sort(function compareNumbers(a, b) {return a - b;});
+//Building all all unique times where as slot starts or ends, if there is a slot being added, it is also added to the list
+var buildSampling=function (slots, slot = false) {
+		var Sampling=[];	 
+		for (var k=0;k<slots.length;k++) {
+				var start=parseInt(slots[k].start,10);
+				var end=parseInt(slots[k].end,10);
+				if(Sampling.indexOf(start)===-1){
+						Sampling.push(start);		}
+				if(Sampling.indexOf(end)===-1){
+						Sampling.push(end);		}		
+		};
+		if(slots.length>0){
+				if(parseInt(slots[0].start,10)!==sliderHour.min){
+						Sampling.push(sliderHour.min);		}	
+		}else{Sampling.push(sliderHour.min);}
+
+		if(Sampling.indexOf(sliderHour.max)=== -1){
+				Sampling.push(sliderHour.max);	}
+
+		if(slot){
+				if(Sampling.indexOf(parseInt(slot.start,10))===-1){
+						Sampling.push(parseInt(slot.start,10));}
+				if(Sampling.indexOf(parseInt(slot.end,10))===-1){
+						Sampling.push(parseInt(slot.end,10));}	
+		}
+		return Sampling.sort(function compareNumbers(a, b) {return a - b;});
 }		
 
+//Make graph for the given room from the subslots, returns a list with
+// - first argument indicating if it is overcrowded at some point 
+// -  an object with x,y where x is the time in minutes and y the occupancy of the building
 var buildOccupation = function(subslots,room,slot){
-	var overcrowded = false;
-	var occupation=[];
-	var currentSlots=[];
-	var Sampling=[];
-	if(slot){
-		Sampling = buildSampling(subslots,slot);
-	}else{Sampling = buildSampling(subslots)}
-			
-	var k=0;
-	//for each sampling value (start or end of a slot in the slot list)
-	while(k<Sampling.length){
-		//We add all the slots starting at this hour and remove them from the slot list
-		//console.log(Sampling[k]);
-		while(subslots.length>0 && parseInt(subslots[0].start,10) === Sampling[k] ){
-			currentSlots.push(subslots.shift());}
-		//We remove all the slots ending at this hour
-		for (var j=currentSlots.length-1;j>=0;j--) {
-			if(parseInt(currentSlots[j].end)=== Sampling[k]){
-				currentSlots.splice(j,1);}
-		}
-		if( currentSlots.length > room.max){
-			overcrowded = true;
-			for(var m=0;m<currentSlots.length;m++){
-				$('#rowslot'+currentSlots[m].id_slot).addClass('warning');
-			}
-			
-			}
-		occupation.push({'x':Sampling[k],'y':currentSlots.length});
-		k++;			
-	}		
-	return [overcrowded,occupation];
+		var overcrowded = false;
+		var occupation=[];
+		var currentSlots=[];
+		var Sampling=[];
+		if(slot){
+				Sampling = buildSampling(subslots,slot);
+		}else{Sampling = buildSampling(subslots)}
 
+		var k=0;
+		//for each sampling value (start or end of a slot in the slot list)
+		while(k<Sampling.length){
+				//We add all the slots starting at this hour and remove them from the slot list
+				//console.log(Sampling[k]);
+				while(subslots.length>0 && parseInt(subslots[0].start,10) === Sampling[k] ){
+						currentSlots.push(subslots.shift());}
+				//We remove all the slots ending at this hour
+				for (var j=currentSlots.length-1;j>=0;j--) {
+						if(parseInt(currentSlots[j].end)=== Sampling[k]){
+								currentSlots.splice(j,1);}
+				}
+				if( currentSlots.length > room.max){
+						overcrowded = true;
+						for(var m=0;m<currentSlots.length;m++){
+								$('#rowslot'+currentSlots[m].id_slot).addClass('warning');
+						}
+				}
+				occupation.push({'x':Sampling[k],'y':currentSlots.length});
+				k++;			
+		}		
+		return [overcrowded,occupation];
 } 
 
 
-//Load the occupation of the room
+//Display the occupation of the room roomRef, 
+//display the graph in targetZone for the full week or a single day (given by day argument), 
+//the graph will have a width given by graphwidth 
+//A Warning message will be displayed in the element with id warningRef 
 var roomOccupation = function(graphwidth,roomRef, targetZone, warningRef,day, week = false,refslot = false){
 	var occupations = [];
 	var innerdays =[];
@@ -177,11 +192,9 @@ var roomOccupation = function(graphwidth,roomRef, targetZone, warningRef,day, we
 	var overcrowdedDuringWeek=false;
 
 	
-	//console.log(room);
 	//creating slotlist ordered by start
 	var subslotsRoom=slotList.filter(function(obj){return  parseInt(obj.ref_room,10)===parseInt(room.id_room,10);});
 
-	//console.log(room);
 	if(week === true ){
 		for(var j=1;j<7;j++){
 			innerdays.push(j);}

@@ -13,7 +13,7 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 		$line='<h1>Users</h1><table>';	
 		
 		$i=0;
-		while($donnees=$reponse->fetch()) {
+		while($donnees=$reponse->fetch(PDO::FETCH_ASSOC)) {
 			if($i % 10 == 0 ){
 				$line.=th_users();		
 			}
