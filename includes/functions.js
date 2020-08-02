@@ -158,7 +158,6 @@ var buildOccupation = function(subslots,room,slot){
 		//for each sampling value (start or end of a slot in the slot list)
 		while(k<Sampling.length){
 				//We add all the slots starting at this hour and remove them from the slot list
-				//console.log(Sampling[k]);
 				while(subslots.length>0 && parseInt(subslots[0].start,10) === Sampling[k] ){
 						currentSlots.push(subslots.shift());}
 				//We remove all the slots ending at this hour
@@ -208,13 +207,15 @@ var roomOccupation = function(graphwidth,roomRef, targetZone, warningRef,day, we
 		if(tempResult[0]==true ){
 			overcrowdedDuringWeek = true;
 		}
-		occupations.push(tempResult);}//
+		occupations.push(tempResult);}
+
+//Adding the warning in case of overcrowding
 if(refslot===false)	{
-	if(overcrowdedDuringWeek === true){
-		$(warningRef).append('The room <a href="rooms_occupation.php?id_room='+room.id_room+'&date='+$('input[name="date"]').val()+'">'+room.officeName+'</a> is overcrowded at some point in the week.<br>');
-		d3.select('[id="'+room.idSvg+'"]').style('fill','red').style('fill-opacity',0.3);
-	}else{
-		d3.select('[id="'+room.idSvg+'"]').style('fill','green').style('fill-opacity',0.08);}
+		if(overcrowdedDuringWeek === true){
+				$(warningRef).append('The room <a href="rooms_occupation.php?id_room='+room.id_room+'&date='+$('input[name="date"]').val()+'">'+room.officeName+'</a> is overcrowded at some point in the week.<br>');
+				d3.select('[id="'+room.idSvg+'"]').style('fill','red').style('fill-opacity',0.3);
+		}else{
+				d3.select('[id="'+room.idSvg+'"]').style('fill','green').style('fill-opacity',0.08);}
 }
 
 	
@@ -234,21 +235,24 @@ if(refslot===false)	{
 		 .x(function(d) { return x(d.x); })
 	    .y(function(d) { return y(d.y); }).curve(interpolationMode);    
 
+var drawGraphInner = function(outerRoom,outerOccupations,outerGraphZone,indixDay,daysList){
+    var j = indixDay;
+	var room = outerRoom;
+	var occupations=outerOccupations;
+	var graphzone=outerGraphZone;
+	var innerdays=daysList ;
 
-for(var j=0;j<occupations.length;j++){
 	var maxOfGraph=d3.max(occupations[j][1], function(d) { return Math.max(d.y+1,parseInt(room.places,10)); });
 	var graph = graphzone.append("g").attr("data-day",j).attr("transform", "translate("+dayDims.width+","+(margins.top+j*margins.lineheight+margins.graphspace*(j-1))+")");
 	  x.domain(d3.extent(occupations[j][1], function(d) { return d.x; }));
 	  y.domain([0,maxOfGraph]);
 
-	 var textDay = graphzone.append("text").classed('nameDays',true)
-	 		.attr("transform", "translate(20,"+(margins.top+(j+0.5)*margins.lineheight+margins.graphspace*(j-1))+")")
-	      .text(weekDays[innerdays[j]]);
+	var textDay = graphzone.append("text").classed('nameDays',true)
+		.attr("transform", "translate(20,"+(margins.top+(j+0.5)*margins.lineheight+margins.graphspace*(j-1))+")")
+	    .text(weekDays[innerdays[j]]);
 		if(occupations[j][0]===true){//if the room is overcrowded, the name of the day goes to red
 			textDay.attr('fill','red')
 		}
-			
-			
 			
 	if (j === occupations.length-1 ) {
 	  graph.append("g")
@@ -260,14 +264,11 @@ for(var j=0;j<occupations.length;j++){
 	}	
 	
 	if(week!==true){
-	 var textRoom = graphzone.append("text").classed('nameRoom',true)
-	 		.attr("transform", "translate(25,"+(margins.top+(j+0.98)*margins.lineheight+margins.graphspace*(j-1))+")")
-	      .text(room.officeName);	  	
-	
-	
+		var textRoom = graphzone.append("text").classed('nameRoom',true)
+				.attr("transform", "translate(25,"+(margins.top+(j+0.98)*margins.lineheight+margins.graphspace*(j-1))+")")
+				.text(room.officeName);	  	
 	}
   graph.append("g").call(d3.axisLeft(y).ticks(3));
-	      
 	//plotting occupation before slot
 	  graph.append("path")
 	      .datum(occupations[j][1])
@@ -275,28 +276,31 @@ for(var j=0;j<occupations.length;j++){
 	      .attr("d", line);
 
 	  //plotting threshold and max capacity
-	  graph.append("rect").attr("x",0).attr('y',0).classed('rectmax',true)
-	  	.attr('width',sliderHour.max-sliderHour.min)
-	  	.attr('height',Math.abs( y(maxOfGraph)-y(room.max) ) );
-	  	
+		graph.append("rect").attr("x",0).attr('y',0).classed('rectmax',true)
+				.attr('width',sliderHour.max-sliderHour.min)
+				.attr('height',Math.abs( y(maxOfGraph)-y(room.max) ) );
 	  	
 	  	if(slot){
-	  		//plotting occupation after slot
-			var lineSlot = d3.line()
-			 .x(function(d) { return x(d.x); })
-		    .y(function(d) { if(slot.start <= d.x && slot.end > d.x ){return y(d.y+1);}else{return y(d.y);} }).curve(interpolationMode);	  	  
+				//plotting occupation after slot
+				var lineSlot = d3.line()
+						.x(function(d) { return x(d.x); })
+						.y(function(d) { if(slot.start <= d.x && slot.end > d.x ){return y(d.y+1);}else{return y(d.y);} }).curve(interpolationMode);	  	  
 		  
-		  graph.append("path")
-		      .datum(occupations[j][1])
-		      .classed('slotLine',true)
-		      .attr("d", lineSlot);	  	
+				 graph.append("path")
+						.datum(occupations[j][1])
+						.classed('slotLine',true)
+						.attr("d", lineSlot);	  	
 	  	}
-}//End for days	
 }
 
+for(var j=0;j<occupations.length;j++){
+		drawGraphInner(room,occupations,graphzone,j,innerdays )
+}
+}
 
+//Create a slider 
 var sliderStep = function(slider){
-	var sliderStep = d3
+	var sliderD3 = d3
     .sliderBottom()
     .min(slider.min)
     .max(slider.max)
@@ -316,12 +320,13 @@ var sliderStep = function(slider){
     .attr('height', 44)
     .append('g')
     .attr('transform', 'translate(30,10)');
-  	gStep.call(sliderStep);
-  	d3.select(slider.output).text(minToHours(sliderStep.value())).attr('data-value',sliderStep.value());
+  	gStep.call(sliderD3);
+  	d3.select(slider.output).text(minToHours(sliderD3.value())).attr('data-value',sliderD3.value());
  	slider.update.call(this);
- 	return sliderStep;
+ 	return sliderD3;
 }
 
+//Add a rectangle from slot to scheduleZone with proprer color depending on office and workplace
 var addSlotToSchedule =function(slot,scheduleZone,office,workplace){
 	var slotSchedule=scheduleZone.append('g')
 			.attr('id','slot'+slot.id_slot)
@@ -351,34 +356,7 @@ var addSlotToSchedule =function(slot,scheduleZone,office,workplace){
 		}
 }
 
-var addSlotToTable=function(data,removable = false){
-	if(!$('#rowslot'+data.id_slot).length){
-		//<th>Day</th><th>Start</th><th>End</th><th>Length</th><th>Room</th>
-		var rights=allowedRights('#schedule');	
-		var iduser=parseInt($('#schedule').data('iduser'),10);	
-		var startType= parseInt(data.start,10)>780 ? 'morningSlot' : 'afternoonSlot';
-		var endType=parseInt(data.end,10)>780 ? 'morningSlot' : 'afternoonSlot';
-		var line='<tr class="rowslots rowslot'+data.id_slot+'" id="rowslot'+data.id_slot+'"><td>';
-		//console.log(location.pathname.split("/").slice(-1)[0]);
-		if(location.pathname.split("/").slice(-1)[0]==="schedule_build.php"){
-			line+='<a href="#" class="editSlot" data-id="'+data.id_slot+'">';	
-		}else{
-			line+='<a href="schedule_build.php?id_slot='+data.id_slot+'" class="editSlot" data-id="'+data.id_slot+'">';		
-		}
-		if(editIcon(data)){
-			line+='<img src="images/icones/edit.png" alt="edit">';
-		}
-		
-		
-		line+='</a></td><td>'+weekDays[data.day]+'</td><td class="'+startType+'">'+minToHours(data.start)+'</td><td class="'+endType+'">'+minToHours(data.end)+'</td><td>'+minToHours(data.length)+'</td><td>'+data.room+'</td><td>'+data.commentaire+'</td><td>'+data.valid+'</td><td>';
-		if(deleteIcon(data)){
-			line+='<a href="slot_delete.php?id_slot='+data.id_slot+'"><img src="images/icones/delete.png" alt="delete this slot"></a>';
-		}
-		line+='</td></tr>';
-		$('#rowDay'+(parseInt(data.day,10)+1),'#SlotList').before(line);	
-	}
-}
-
+//Get rights to edit/delete the data from rights passed through the element #schedule on the page 
 var editIcon=function(data){
 	var rights=allowedRights('#schedule');	
 	var team=$('#schedule').data('team');
@@ -392,7 +370,6 @@ var editIcon=function(data){
 	}else{
 		return false;
 	}
-
 } 
 var deleteIcon=function(data){
 	var rights=allowedRights('#schedule');	
@@ -407,10 +384,37 @@ var deleteIcon=function(data){
 	}else{
 		return false;
 	}
-
 } 
 
-var addSlotToTableRoom=function(data,removable = false,refTable){
+//Add slot to table of slot from data
+var addSlotToTable=function(data){
+	if(!$('#rowslot'+data.id_slot).length){
+		//<th>Day</th><th>Start</th><th>End</th><th>Length</th><th>Room</th>
+		var rights=allowedRights('#schedule');	
+		var iduser=parseInt($('#schedule').data('iduser'),10);	
+		var startType= parseInt(data.start,10)>780 ? 'morningSlot' : 'afternoonSlot';
+		var endType=parseInt(data.end,10)>780 ? 'morningSlot' : 'afternoonSlot';
+		var line='<tr class="rowslots rowslot'+data.id_slot+'" id="rowslot'+data.id_slot+'"><td>';
+		//Creating the proper link to avoid a reload of the page if building the schedule
+		if(editIcon(data)){//Add the icon only if the rights are ok
+				if(location.pathname.split("/").slice(-1)[0]==="schedule_build.php"){
+						line+='<a href="#" class="editSlot" data-id="'+data.id_slot+'">';	
+				}else{
+						line+='<a href="schedule_build.php?id_slot='+data.id_slot+'" class="editSlot" data-id="'+data.id_slot+'">';		
+				}
+				line+='<img src="images/icones/edit.png" alt="edit">';
+		}
+		line+='</a></td><td>'+weekDays[data.day]+'</td><td class="'+startType+'">'+minToHours(data.start)+'</td><td class="'+endType+'">'+minToHours(data.end)+'</td><td>'+minToHours(data.length)+'</td><td>'+data.room+'</td><td>'+data.commentaire+'</td><td>'+data.valid+'</td><td>';
+		if(deleteIcon(data)){//Add the icon only if the rights are ok
+			line+='<a href="slot_delete.php?id_slot='+data.id_slot+'"><img src="images/icones/delete.png" alt="delete this slot"></a>';
+		}
+		line+='</td></tr>';
+		$('#rowDay'+(parseInt(data.day,10)+1),'#SlotList').before(line);	
+	}
+}
+
+//Add data to table #refTable (to be able to display the schedule for two rooms if adding for both office and workplace 
+var addSlotToTableRoom=function(data,refTable){
 	var innerRefTable;
 	if (refTable=== undefined ) {
 		innerRefTable = '#roomSlotList';
@@ -444,7 +448,8 @@ var addSlotToTableRoom=function(data,removable = false,refTable){
 	$('#rowDay'+(parseInt(data.day,10)+1),innerRefTable).before(line);
 }
 
-var addSlotToTableFull=function(data,removable = false){
+//Add data to table #slotList with full data (name + hour + room)
+var addSlotToTableFull=function(data){
 	var startType= parseInt(data.start,10)>780 ? 'morningSlot' : 'afternoonSlot';
 	var endType=parseInt(data.end,10)>780 ? 'morningSlot' : 'afternoonSlot';	
 	var line='<tr class="rowslots rowslot'+data.id_slot+'" id="rowslot'+data.id_slot+'"><td>';
@@ -487,7 +492,7 @@ var allowedRights=function (insight) {
 var rights=0;
 
 
-//import maps
+//import maps 
 var displayOccupation=function(sendSlotSchedule){
 	$(".innermap").each(function () {
 		var file=$(this).data('map');
@@ -510,17 +515,16 @@ var displayOccupation=function(sendSlotSchedule){
 
 
 
-//Load the occupation of the room
+//Load the occupation of the full builing from the slotList (for a team, the whole lab, etc)
 var fullOccupation = function(targetZone, warningRef){
 	var occupations = [];
 	var innerdays =[];
 	var subslotsDay;
 	for(var j=1;j<7;j++){
 		innerdays.push(j);}
-	for(var j=0;j<innerdays.length;j++){
-		//Table containing all the occupations, either for a single day of the whole week
+	for(var j=0;j<innerdays.length;j++){//Table containing all the occupations, either for a single day of the whole week
 		var subslotsDay = slotList.filter(function(obj){return  parseInt(innerdays[j],10)===parseInt(obj.day,10);}).sort(function(a,b){return parseInt(a.start,10)-parseInt(b.start,10);});
-		occupations.push(buildingOccupation(subslotsDay));}//
+		occupations.push(buildingOccupation(subslotsDay));}
 	var margins={'left':0,'top':14,'bottom':18,'right':5,'lineheight':50,'graphspace':9}
 	var dimensionGraph={width:dims.width,height:(margins.lineheight*occupations.length+margins.graphspace*(occupations.length-1)+margins.top+margins.bottom)};
 	var graphzone = d3.select(targetZone).html('').append('svg')
@@ -528,109 +532,108 @@ var fullOccupation = function(targetZone, warningRef){
 				.attr('height',dimensionGraph.height);
 	var interpolationMode = d3.curveStepAfter;
 	var line = d3.line()
-		 .x(function(d) { return x(d.x); })
+		.x(function(d) { return x(d.x); })
 	    .y(function(d) { return y(d.y); }).curve(interpolationMode);    
 
-//Detect the x position of the mouse pointer
-var getMinutesAxis =  function (that) {
+	//Detect the x position of the mouse pointer
+	var getMinutesAxis =  function (that) {
 	   var x0 = x.invert((d3.mouse(that)[0]));
-        return Math.floor(x0);}
-//Make the slot timetable dynamic with indication of hour and number of people in the building
-var LiveOccupation = function (j,x,y) {
-	var day=j,innerX=x,innerY=y;
-	//Point bleu
-	var focus = graph.append("g")
-	      .attr("class", "focus")
-	      .style("display", "none");
-	  focus.append("circle").attr("r", 4.5);
-	var textFocus = focus.append("text").attr("class","movLabel").attr("x", 0).attr("dy", "-0.5em");
-	if(day===0){
-		textFocus.attr("dy", "0.9em");}	
-	//animating the focus element and adding extra information	
-	var mousemove=function () {
-	//console.log(occupations);
-	var minutes=getMinutesAxis(this);
-		intervalsBefore=occupations[day][1].filter(function(obj){return obj.x<minutes;}),
-		matchingInterval=intervalsBefore[intervalsBefore.length-1];
-    focus.attr("transform", "translate(" + (innerX(minutes)) + "," + (innerY(matchingInterval.y)) + ")");
-    focus.select("text").text(minToHours(minutes)+' '+matchingInterval.y+' p');
-	 focus.style("display", null);
-	 
-	 var smallSlots=slotList.filter(function (obj) {return parseInt(obj.day,10)===day+1 && parseInt(obj.start,10)<=minutes && parseInt(obj.end,10)>=minutes ;});
-	 var RoomsOccupied=[];
-	 for(var k=0;k<smallSlots.length;k++){
-	 	var slot = smallSlots[k];
-	 	//roomExisting = RoomsOccupied.filter(function (obj) {return parseInt(obj.idSvg,10)===slot.idSvg;});
-	 	indexRoom = RoomsOccupied.map(function(e) { return e.idSvg; }).indexOf(slot.idSvg);
-	 	if(indexRoom === -1){
-	 		RoomsOccupied.push({'idSvg':slot.idSvg,'max':parseInt(slot.max,10),'places':parseInt(slot.places,10),occ:1});
-	 	}else{RoomsOccupied[indexRoom].occ+=1;}
-	 }
-	 d3.selectAll('.innermap').selectAll('.coloredRoom').style('fill','none').classed('coloredRoom',false);
-	 for(var k=0;k<RoomsOccupied.length;k++){
-		var room=d3.selectAll('.innermap').select('#'+RoomsOccupied[k].idSvg);
-		if(RoomsOccupied[k].occ < RoomsOccupied[k].max && RoomsOccupied[k].occ>0){
-			room.style('fill','#d9ef8b').classed('coloredRoom',true);
-		}else if (RoomsOccupied[k].occ === RoomsOccupied[k].max && RoomsOccupied[k].occ>0) {
-			room.style('fill','#fee08b').classed('coloredRoom',true);
-		}else if(RoomsOccupied[k].occ > RoomsOccupied[k].max && RoomsOccupied[k].occ>0){
-			room.style('fill','#d73027').classed('coloredRoom',true);
-		}
-	 }	 
- 
-	}	
-	
-		//mouse detection zone
-  graph.append("rect")
-      .attr("class", "overlay").attr("width", 900-dayDims.width-margins.right).attr("height",margins.lineheight).attr('data-day',j)
-      .attr("fill", "black")
-      .on("mouseover", function() {focus.style("display", null);})
-      .on("mouseout", function() {focus.style("display", "none");
-      	d3.selectAll('.innermap').selectAll('.coloredRoom').style('fill','none').classed('coloredRoom',false);})
-      .on("mousemove", mousemove);	
-}
+	return Math.floor(x0);}
 
-//console.log(occupations);
-for(var j=0;j<occupations.length;j++){
-	var maxOfGraph=d3.max(occupations[j][1], function(d) { return d.y+1; });
-	var graph = graphzone.append("g").attr("data-day",j).attr("transform", "translate("+dayDims.width+","+(margins.top+j*margins.lineheight+margins.graphspace*(j-1))+")");
-	var x = d3.scaleLinear()
-	    .rangeRound([0, 900-dayDims.width-margins.right]).domain(d3.extent(occupations[j][1], function(d) { return d.x; }));
-	var y = d3.scaleLinear()
-	    .rangeRound([margins.lineheight, 0]).domain([0,maxOfGraph]);	
-	//Add the name of the day (monday, etc))
-	 var textDay = graphzone.append("text").classed('nameDays',true)
-	 		.attr("transform", "translate(20,"+(margins.top+(j+0.4)*margins.lineheight+margins.graphspace*(j-1))+")")
-	      .text(weekDays[innerdays[j]]);
-	//Add the full date 31-12-2020
-  	 var dateOfDays= new Date();
- 			dateOfDays.setDate(FormatToDate("dd-mm-yy",currentMonday).getDate() + (innerdays[j]-1));
- 			dateOfDays=DateToFormat("dd-mm-yy",dateOfDays);
-	 var textDate = graphzone.append("text")
-	 		.attr("text-anchor", "left")
-			.attr("font-size","0.8em")
-	 		.attr("transform", "translate(20,"+(margins.top+(j+0.8)*margins.lineheight+margins.graphspace*(j-1))+")")
-	      .text(dateOfDays);	 
-	addLineToTableEntries(occupations[j],innerdays[j],dateOfDays);	      
-	//Adding axis label for the last graph		
-	if (j === occupations.length-1 ) {
-	  graph.append("g")
-	      .attr("transform", "translate(0,"+y(0)+")")
-	      .call(d3.axisBottom(x).ticks(8).tickFormat(minToHours))
-	      .append("text").attr("transform", "translate("+(dimensionGraph.width-30)+",15)").attr("y", 6).attr("dy", "0.71em")
-	      .classed("xLabel",true)
-	      .text("Hour");
-	}	
-  graph.append("g").call(d3.axisLeft(y).ticks(3));
-	      
-	//plotting occupation before slot
-	  graph.append("path")
-	      .datum(occupations[j][1])
-	      .classed('occupationLine',true)
-	      .attr("d", line);
-	//Animation with mouse moving
-	LiveOccupation(j,x,y);	
-	}//End for days	
+	//Make the slot timetable dynamic with indication of hour and number of people in the building
+	var LiveOccupation = function (j,x,y) {
+			var day=j,innerX=x,innerY=y;
+			//Point bleu
+			var focus = graph.append("g")
+				  .attr("class", "focus")
+				  .style("display", "none");
+			focus.append("circle").attr("r", 4.5);
+			var textFocus = focus.append("text").attr("class","movLabel").attr("x", 0).attr("dy", "-0.5em");
+			if(day===0){
+				textFocus.attr("dy", "0.9em");}	
+			//animating the focus element and adding extra information	
+			var mousemove=function () {
+					//console.log(occupations);
+					var minutes=getMinutesAxis(this);
+						intervalsBefore=occupations[day][1].filter(function(obj){return obj.x<minutes;}),
+						matchingInterval=intervalsBefore[intervalsBefore.length-1];
+					focus.attr("transform", "translate(" + (innerX(minutes)) + "," + (innerY(matchingInterval.y)) + ")");
+					focus.select("text").text(minToHours(minutes)+' '+matchingInterval.y+' p');
+					 focus.style("display", null);
+					 
+					 var smallSlots=slotList.filter(function (obj) {return parseInt(obj.day,10)===day+1 && parseInt(obj.start,10)<=minutes && parseInt(obj.end,10)>=minutes ;});
+					 var RoomsOccupied=[];
+					 for(var k=0;k<smallSlots.length;k++){
+						var slot = smallSlots[k];
+						//roomExisting = RoomsOccupied.filter(function (obj) {return parseInt(obj.idSvg,10)===slot.idSvg;});
+						indexRoom = RoomsOccupied.map(function(e) { return e.idSvg; }).indexOf(slot.idSvg);
+						if(indexRoom === -1){
+							RoomsOccupied.push({'idSvg':slot.idSvg,'max':parseInt(slot.max,10),'places':parseInt(slot.places,10),occ:1});
+						}else{RoomsOccupied[indexRoom].occ+=1;}
+					 }
+					 d3.selectAll('.innermap').selectAll('.coloredRoom').style('fill','none').classed('coloredRoom',false);
+					 for(var k=0;k<RoomsOccupied.length;k++){
+						var room=d3.selectAll('.innermap').select('#'+RoomsOccupied[k].idSvg);
+						if(RoomsOccupied[k].occ < RoomsOccupied[k].max && RoomsOccupied[k].occ>0){
+							room.style('fill','#d9ef8b').classed('coloredRoom',true);
+						}else if (RoomsOccupied[k].occ === RoomsOccupied[k].max && RoomsOccupied[k].occ>0) {
+							room.style('fill','#fee08b').classed('coloredRoom',true);
+						}else if(RoomsOccupied[k].occ > RoomsOccupied[k].max && RoomsOccupied[k].occ>0){
+							room.style('fill','#d73027').classed('coloredRoom',true);
+						}
+					 }	 
+			}	
+			
+		//mouse detection zone
+		  graph.append("rect")
+			  .attr("class", "overlay").attr("width", 900-dayDims.width-margins.right).attr("height",margins.lineheight).attr('data-day',j)
+			  .attr("fill", "black")
+			  .on("mouseover", function() {focus.style("display", null);})
+			  .on("mouseout", function() {focus.style("display", "none");
+				d3.selectAll('.innermap').selectAll('.coloredRoom').style('fill','none').classed('coloredRoom',false);})
+			  .on("mousemove", mousemove);	
+	}
+
+		for(var j=0;j<occupations.length;j++){
+				var maxOfGraph=d3.max(occupations[j][1], function(d) { return d.y+1; });
+				var graph = graphzone.append("g").attr("data-day",j).attr("transform", "translate("+dayDims.width+","+(margins.top+j*margins.lineheight+margins.graphspace*(j-1))+")");
+				var x = d3.scaleLinear()
+						.rangeRound([0, 900-dayDims.width-margins.right]).domain(d3.extent(occupations[j][1], function(d) { return d.x; }));
+				var y = d3.scaleLinear()
+						.rangeRound([margins.lineheight, 0]).domain([0,maxOfGraph]);	
+				//Add the name of the day (monday, etc))
+				var textDay = graphzone.append("text").classed('nameDays',true)
+						.attr("transform", "translate(20,"+(margins.top+(j+0.4)*margins.lineheight+margins.graphspace*(j-1))+")")
+						.text(weekDays[innerdays[j]]);
+				//Add the full date 31-12-2020
+				var dateOfDays= new Date();
+				dateOfDays.setDate(FormatToDate("dd-mm-yy",currentMonday).getDate() + (innerdays[j]-1));
+				dateOfDays=DateToFormat("dd-mm-yy",dateOfDays);
+				var textDate = graphzone.append("text")
+						.attr("text-anchor", "left")
+						.attr("font-size","0.8em")
+						.attr("transform", "translate(20,"+(margins.top+(j+0.8)*margins.lineheight+margins.graphspace*(j-1))+")")
+						.text(dateOfDays);	 
+				addLineToTableEntries(occupations[j],innerdays[j],dateOfDays);	      
+				//Adding axis label for the last graph		
+				if (j === occupations.length-1 ) {
+						graph.append("g")
+								.attr("transform", "translate(0,"+y(0)+")")
+								.call(d3.axisBottom(x).ticks(8).tickFormat(minToHours))
+								.append("text").attr("transform", "translate("+(dimensionGraph.width-30)+",15)").attr("y", 6).attr("dy", "0.71em")
+								.classed("xLabel",true)
+								.text("Hour");
+				}	
+				graph.append("g").call(d3.axisLeft(y).ticks(3));
+
+				//plotting occupation 
+				graph.append("path")
+						.datum(occupations[j][1])
+						.classed('occupationLine',true)
+						.attr("d", line);
+				//Animation with mouse moving
+				LiveOccupation(j,x,y);	
+		}//End for days	
 }
 
 
@@ -737,6 +740,7 @@ var buildingOccupation = function(subslots){
 
 
 
+//Add the rectangle on the left of the schedules with their names
 var addDaysRectangles=function(displayZone,paletteDays,weekDays){
 	//adding each day and make them clickable
 	for (var j=1;j<7;j++) {
@@ -763,6 +767,7 @@ var addDaysRectangles=function(displayZone,paletteDays,weekDays){
 	}
 }
 
+//Add the vertical bars to the schedules
 var addBars = function (dayDims,scheduleZone,sliderHour) {
 	//Adding vertical bars as label
 	for(var j=sliderHour.min;j<=sliderHour.max;j+=15){
