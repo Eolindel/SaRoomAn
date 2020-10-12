@@ -6,6 +6,8 @@
 <h1>Installation</h1>
 <ol>
 <li>In the file "dbconnect.php" in the « includes » folder, change your mySQL connecting parameters : "dbname", "user" and corresponding "password". This user must have a writing and reeading privelege over the corresponding database. Change also the mail and name of the contact person for the recovery mail or initialization of the password.</li>
+<li>Create the different databases by importing the "import_bdd.sql"</li>
+<li></li>
 <li>Create a map of each floor and building (under inkscape) <span class="warning">according to the following instructions</span> and put them in the « maps » folder.</li>
 <li>Put the characteristics of each room in the "room.csv" file of the « import_files » folder, the crucial data are the 'building', 'floor', 'idSvg', 'officeName', 'places' (usual capacity of the room) and 'max' columns (thrsehold imposed by your local rules)</li>
 <li>Put your list of users in the file users.csv file of the « import_files » folder, the crucial columns are 'First Name', 'Last Name', 'active' (put a 1, a 0 will disable the corresponding person), 'Mail' (used as unique identifier), 'Office', 'Workplace' (if people work in a dedicated room on top of their office), 'roomStatus' (1 means basics user, 2 means user able to validate the schedule of people working directly under their supevision, 3 means local validator and will be able to validate the schedule of all the people in the same team, 4 means global validator and 5 means administrator )</li>
