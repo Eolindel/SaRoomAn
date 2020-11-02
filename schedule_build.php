@@ -104,7 +104,7 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 	$line.='<div id="occupationRoom2"></div>';	
 	
 	$line.='<label for="day" class="label_court2">Day<sup>*</sup> : </label>';
-	for($i=1;$i<7;$i++){
+	for($i=$startDay;$i<7;$i++){
 		$line.=radio_r('day', $i,$days[$i] , $object);
 	}
 	$line.='	

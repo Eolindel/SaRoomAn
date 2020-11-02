@@ -42,9 +42,7 @@ var sendSlotSchedule = function () {
    	 	var monday=getMonday(inputDate);
 			//Creating an array containing the date of each day
    	 	var dateOfDays=[];
-   	 	//trick to keep monday as the day with indix 1;
-   	 	dateOfDays.push(monday);
-   	 	for(var j=1;j<7;j++){
+   	 	for(var j=0;j<7;j++){
  				dateOfDays.push(DateToFormat("dd-mm-yy",addDays(monday,j-1)));
    	 		$('#day'+j).attr('data-date',dateOfDays[j]);
 				d3.select('#dateDay'+j).text(dateOfDays[j]);

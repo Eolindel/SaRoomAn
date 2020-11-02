@@ -2,6 +2,8 @@
 //sliders configuration
 var sliderHour = {'min':420,'max':1320,'step':15,'default':540,'ticks':6,'output':'#value-hour','input':'#slider-hour'};
 var sliderLength = {'min':15,'max':720,'step':15,'default':240.01,'ticks':9,'output':'#value-length','input':'#slider-length'};
+//starting day : 1 : Monday, 0 : Sunday It must be change in  body.php
+var startDay = 1;
 
 //Convert to formatted day Date() -> d-m-Y 
 DateToFormat = function (dateFormate, datetime) {
@@ -76,7 +78,7 @@ function getWeekNumber(d) {
 //Dimensions of a day
 var dayDims={'height':45,'width':150};
 //Dimensions of the schedule
-var dims={'width':(sliderHour.max-sliderHour.min+dayDims.width+20),'height':290};
+var dims={'width':(sliderHour.max-sliderHour.min+dayDims.width+20),'height':20+(7-startDay)*dayDims.height};
 
 var weekDays=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 //Colors for the different days
@@ -114,7 +116,7 @@ var highlightElem =  function (elemId){
 		setTimeout(function(){$(elemId).animate({ backgroundColor: "#ffffff" }, 800)},800);
 }	
 	
-//Building all all unique times where as slot starts or ends, if there is a slot being added, it is also added to the list
+//Building all unique times where as slot starts or ends, if there is a slot being added, it is also added to the list
 var buildSampling=function (slots, slot = false) {
 		var Sampling=[];	 
 		for (var k=0;k<slots.length;k++) {
@@ -195,7 +197,7 @@ var roomOccupation = function(graphwidth,roomRef, targetZone, warningRef,day, we
 	var subslotsRoom=slotList.filter(function(obj){return  parseInt(obj.ref_room,10)===parseInt(room.id_room,10);});
 
 	if(week === true ){
-		for(var j=1;j<7;j++){
+		for(var j=startDay;j<7;j++){
 			innerdays.push(j);}
 	}else if (day){
 		innerdays.push(day);}
@@ -243,12 +245,12 @@ var drawGraphInner = function(outerRoom,outerOccupations,outerGraphZone,indixDay
 	var innerdays=daysList ;
 
 	var maxOfGraph=d3.max(occupations[j][1], function(d) { return Math.max(d.y+1,parseInt(room.places,10)); });
-	var graph = graphzone.append("g").attr("data-day",j).attr("transform", "translate("+dayDims.width+","+(margins.top+j*margins.lineheight+margins.graphspace*(j-1))+")");
+	var graph = graphzone.append("g").attr("data-day",j).attr("transform", "translate("+dayDims.width+","+(margins.top+j*margins.lineheight+margins.graphspace*(j-startDay))+")");
 	  x.domain(d3.extent(occupations[j][1], function(d) { return d.x; }));
 	  y.domain([0,maxOfGraph]);
 
 	var textDay = graphzone.append("text").classed('nameDays',true)
-		.attr("transform", "translate(20,"+(margins.top+(j+0.5)*margins.lineheight+margins.graphspace*(j-1))+")")
+		.attr("transform", "translate(20,"+(margins.top+(j+0.5)*margins.lineheight+margins.graphspace*(j-startDay))+")")
 	    .text(weekDays[innerdays[j]]);
 		if(occupations[j][0]===true){//if the room is overcrowded, the name of the day goes to red
 			textDay.attr('fill','red')
@@ -265,7 +267,7 @@ var drawGraphInner = function(outerRoom,outerOccupations,outerGraphZone,indixDay
 	
 	if(week!==true){
 		var textRoom = graphzone.append("text").classed('nameRoom',true)
-				.attr("transform", "translate(25,"+(margins.top+(j+0.98)*margins.lineheight+margins.graphspace*(j-1))+")")
+				.attr("transform", "translate(25,"+(margins.top+(j+0.98)*margins.lineheight+margins.graphspace*(j-startDay))+")")
 				.text(room.officeName);	  	
 	}
   graph.append("g").call(d3.axisLeft(y).ticks(3));
@@ -332,7 +334,7 @@ var addSlotToSchedule =function(slot,scheduleZone,office,workplace){
 			.attr('id','slot'+slot.id_slot)
 			.attr('data-id',slot.id_slot)
 			.attr('class','existingSlot')
-			.attr('transform', 'translate('+(slot.start-sliderHour.min)+','+(slot.day-1)*dayDims.height+')');	
+			.attr('transform', 'translate('+(slot.start-sliderHour.min)+','+(slot.day-startDay)*dayDims.height+')');	
 		slotSchedule.append('rect')
 			.attr('width',slot.length)
 			.attr("fill",'#e31a1c')
@@ -520,9 +522,9 @@ var fullOccupation = function(targetZone, warningRef){
 	var occupations = [];
 	var innerdays =[];
 	var subslotsDay;
-	for(var j=1;j<7;j++){
+	for(var j=startDay;j<7;j++){
 		innerdays.push(j);}
-	for(var j=0;j<innerdays.length;j++){//Table containing all the occupations, either for a single day of the whole week
+	for(var j=0;j<innerdays.length;j++){//Table containing all the occupations, either for a single day or the whole week
 		var subslotsDay = slotList.filter(function(obj){return  parseInt(innerdays[j],10)===parseInt(obj.day,10);}).sort(function(a,b){return parseInt(a.start,10)-parseInt(b.start,10);});
 		occupations.push(buildingOccupation(subslotsDay));}
 	var margins={'left':0,'top':14,'bottom':18,'right':5,'lineheight':50,'graphspace':9}
@@ -596,23 +598,23 @@ var fullOccupation = function(targetZone, warningRef){
 
 		for(var j=0;j<occupations.length;j++){
 				var maxOfGraph=d3.max(occupations[j][1], function(d) { return d.y+1; });
-				var graph = graphzone.append("g").attr("data-day",j).attr("transform", "translate("+dayDims.width+","+(margins.top+j*margins.lineheight+margins.graphspace*(j-1))+")");
+				var graph = graphzone.append("g").attr("data-day",j).attr("transform", "translate("+dayDims.width+","+(margins.top+j*margins.lineheight+margins.graphspace*(j-startDay))+")");
 				var x = d3.scaleLinear()
 						.rangeRound([0, 900-dayDims.width-margins.right]).domain(d3.extent(occupations[j][1], function(d) { return d.x; }));
 				var y = d3.scaleLinear()
 						.rangeRound([margins.lineheight, 0]).domain([0,maxOfGraph]);	
 				//Add the name of the day (monday, etc))
 				var textDay = graphzone.append("text").classed('nameDays',true)
-						.attr("transform", "translate(20,"+(margins.top+(j+0.4)*margins.lineheight+margins.graphspace*(j-1))+")")
+						.attr("transform", "translate(20,"+(margins.top+(j+0.4)*margins.lineheight+margins.graphspace*(j-startDay))+")")
 						.text(weekDays[innerdays[j]]);
 				//Add the full date 31-12-2020
 				var dateOfDays= new Date();
-				dateOfDays.setDate(FormatToDate("dd-mm-yy",currentMonday).getDate() + (innerdays[j]-1));
+				dateOfDays.setDate(FormatToDate("dd-mm-yy",currentMonday).getDate() + (innerdays[j]-startDay));
 				dateOfDays=DateToFormat("dd-mm-yy",dateOfDays);
 				var textDate = graphzone.append("text")
 						.attr("text-anchor", "left")
 						.attr("font-size","0.8em")
-						.attr("transform", "translate(20,"+(margins.top+(j+0.8)*margins.lineheight+margins.graphspace*(j-1))+")")
+						.attr("transform", "translate(20,"+(margins.top+(j+0.8)*margins.lineheight+margins.graphspace*(j-startDay))+")")
 						.text(dateOfDays);	 
 				addLineToTableEntries(occupations[j],innerdays[j],dateOfDays);	      
 				//Adding axis label for the last graph		
@@ -743,11 +745,11 @@ var buildingOccupation = function(subslots){
 //Add the rectangle on the left of the schedules with their names
 var addDaysRectangles=function(displayZone,paletteDays,weekDays){
 	//adding each day and make them clickable
-	for (var j=1;j<7;j++) {
+	for (var j=startDay;j<7;j++) {
 		var day=displayZone.append('g')
 			.attr("data-day",j)
 			.attr("class","weekDay")
-			.attr('transform', 'translate(0,'+((j-1)*45)+')')
+			.attr('transform', 'translate(0,'+((j-startDay)*45)+')')
 		day.append('rect')
 			.attr('width',dayDims.width+'px')
 			.attr('height',dayDims.height+'px')
@@ -779,12 +781,12 @@ var addBars = function (dayDims,scheduleZone,sliderHour) {
 			.attr("text-anchor", "middle")
 			.text(minToHoursOnly(j));	
 		scheduleZone.append('path')
-			.attr('d','M'+(j-sliderHour.min)+' 0 V '+(6*dayDims.height))
+			.attr('d','M'+(j-sliderHour.min)+' 0 V '+((7-startDay)*dayDims.height))
 			.attr('stroke','#b3b3b3')
 			.attr('stroke-width','2px');		
 		}else{
 		scheduleZone.append('path')
-			.attr('d','M'+(j-sliderHour.min)+' 0 V '+(6*dayDims.height))
+			.attr('d','M'+(j-sliderHour.min)+' 0 V '+((7-startDay)*dayDims.height))
 			.attr('stroke','#b3b3b3');	
 		}
 	}		

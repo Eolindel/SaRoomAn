@@ -34,7 +34,7 @@ var showSendSlot=function () {//Show or hide the submit button and control the d
 			var room2 = roomList.filter(function(obj){return parseInt(obj.id_room,10)===workplace.ref_room;} )[0];	
 			updateRoomTable('#tableRoom',room1);		
 			updateRoomTable('#tableRoom2',room2);	
-			if(!isNaN(day) && day!==0 ){
+			if(!isNaN(day) ){
 				$('#sendSlot').show();
 				checkOverlaps();
 				//Displaying the occupation of the room
@@ -50,7 +50,7 @@ var showSendSlot=function () {//Show or hide the submit button and control the d
 			var room = roomList.filter(function(obj){return parseInt(obj.id_room,10)===roomId;} )[0];
 			updateRoomTable('#tableRoom',room);
 			//If day also given
-			if(!isNaN(day) && day!==0 ){
+			if(!isNaN(day) ){
 				$('#sendSlot').show();
 				checkOverlaps();	
 				//Displaying the occupation of the room
@@ -91,7 +91,7 @@ var updateEnd = function(start,slotLength){
 	d3.select('#slot').select('text').attr('opacity',1); 
 	if (start && slotLength && d3.select('input[name="day"]:checked').node()) {
 		slotDay=d3.select('input[name="day"]:checked').node().value;
-		d3.select('#slot').attr('transform', 'translate('+(start-sliderHour.min)+','+(slotDay-1)*dayDims.height+')');
+		d3.select('#slot').attr('transform', 'translate('+(start-sliderHour.min)+','+(slotDay-startDay)*dayDims.height+')');
 		d3.select('#slot').select('rect').attr('width',slotLength);
 		//console.log('test');
 		showSendSlot();
@@ -365,7 +365,7 @@ var ediSlotToSchedule =function(slot,scheduleZone){
 	//update the current slot
 	var slotSchedule=d3.select('#slot')
 			.attr('data-id',slot.id_slot)
-			.attr('transform', 'translate('+(parseInt(slot.start,10)-parseInt(sliderHour.min,10))+','+(parseInt(slot.day,10)-1)*dayDims.height+')');	
+			.attr('transform', 'translate('+(parseInt(slot.start,10)-parseInt(sliderHour.min,10))+','+(parseInt(slot.day,10)-startDay)*dayDims.height+')');	
 		slotSchedule.select('rect')
 			.attr('width',parseInt(slot.length,10))
 			.attr("fill",'#e31a1c')
@@ -403,9 +403,7 @@ var sendSlotSchedule = function (office,workplace) {
  	var monday=getMonday(inputDate);
 	//Creating an array containing the date of each day
  	var dateOfDays=[];
- 	//trick to keep monday as the day with indix 1;
- 	dateOfDays.push(monday);
- 	for(var j=1;j<7;j++){
+ 	for(var j=0;j<7;j++){
  		dateOfDays.push(DateToFormat("dd-mm-yy",addDays(monday,j-1)));
  		$('input[id="day'+j+'"]').data('date',dateOfDays[j]);
  		//console.log(j+' '+dateOfDays[j]);

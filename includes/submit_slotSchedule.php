@@ -27,6 +27,10 @@ if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5)) AND preg_match('/^(\d{2})
 
 	   $submit['commentaire'] = trim(strip_tags($_POST['commentaire']));	
 		$submit["week"]=date("W",strtotime($_POST['date']));	
+		//correcting for sundays
+		if(intval(date("w",strtotime($_POST['date']))) == 0) {
+			$submit["week"] += 1;
+		}
 		$submit["year"]=$inputDate[3];
 		$submit["date"]=date("Y-m-d", strtotime($_POST['date']));
 		//edit slot

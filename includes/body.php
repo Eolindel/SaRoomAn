@@ -1,5 +1,7 @@
 <?php
 $days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+//Starting day of the week, 0 : adds the sunday to the week. It must also be changed in function.js
+$startDay = 1;
 $roomStatuses=array("1"=>"1 : Basic User (PhD, Post Doc, Internship, Short contract)",
 					"2"=>"2 : Permanent position, Group supervisor",
 					"3"=>"3 : Team Leader",
@@ -139,7 +141,7 @@ function th_peopleWeek(){
 function th_Days(){
 		$days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 		$line='';
-		for($j=1;$j< count($days);$j++){
+		for($j=$GLOBALS["startDay"];$j< count($days);$j++){
 				$line.='<tr id="rowDay'.$j.'"><th colspan="9">'.$days[$j].'</th></tr>';
 		}
 		$line.='<tr id="rowDay7"><th colspan="9"></th></tr>';	
@@ -151,7 +153,7 @@ function th_SchedulePerson(){
 		$line='';
 		$line.='<tr>
 				<th>First Name</th><th>Last Name</th>';
-		for($j=1;$j<count($days);$j++) {
+		for($j=$GLOBALS["startDay"];$j<count($days);$j++) {
 				$line.='<th data-day="'.$j.'">'.$days[$j].'</th>';
 		}	
 		$line.='</tr>';
