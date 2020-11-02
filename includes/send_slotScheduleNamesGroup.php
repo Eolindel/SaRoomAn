@@ -8,7 +8,12 @@ header("Content-Type: text/plain; charset=utf-8", true);
 if(in_array($_SESSION['roomStatus'], array(1,2,3,4,5))){
 	if(isset($_POST['date']) AND preg_match('/^(\d{2})-(\d{2})-(\d{4})$/', $_POST[ "date" ], $inputDate) ){
 		$slots=array();
-		$submit= array("week"=> date("W",strtotime($_POST['date'])),"year"=>$inputDate[3],"id_user"=>$_SESSION['id_user'] );
+		$week = intval(date("W",strtotime($_POST['date'])));
+		//Correcting for sundays
+		if(intval(date("w",strtotime($_POST['date']))) == 0) {
+			$week = $week+1;
+		}
+		$submit= array("week"=> $week,"year"=>$inputDate[3],"id_user"=>$_SESSION['id_user'] );
 		if(isset($_POST['respo'])){
 			$submit['id_user2']=intval($_POST['respo']);
 		}else {
